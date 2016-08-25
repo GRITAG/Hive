@@ -1,2 +1,2 @@
 # Hive
-parallel automation execution server
+parallel automation execution server / node
