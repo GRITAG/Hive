@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Core\Network.cs" />
     <Compile Include="Core\NetworkMessage.cs" />
+    <Compile Include="Core\status.cs" />
     <Compile Include="Drone\Main.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
