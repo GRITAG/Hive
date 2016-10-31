@@ -21,12 +21,32 @@ namespace HiveSuite.Core
 
         ReaderWriterLockSlim QueueLock { get; set; }
 
-        public Listen ListenClass { get; set; }
+        Listen ListenClass { get; set; }
 
-        public Thread ListenThread { get; set; }
+        Thread ListenThread { get; set; }
 
-        public Network()
+        int Port { get; set; }
+
+        public List<NetConnection> Peers
         {
+            get
+            {
+                return NetworkConnctor.Connections;
+            }
+        }
+
+        public int PeerCount
+        {
+            get
+            {
+                return NetworkConnctor.ConnectionsCount;
+            }
+        }
+
+        public Network(int port)
+        {
+            Port = port;
+
             Messages = new Queue<NetworkMessage>();
             QueueLock = new ReaderWriterLockSlim();
 
@@ -74,6 +94,11 @@ namespace HiveSuite.Core
             QueueLock.ExitReadLock();
         }
 
+        public void SendDiscovery()
+        {
+            NetworkConnctor.DiscoverLocalPeers(Port);
+        }
+
         public void SendPeerInfo(IPAddress ip, int port)
         {
             NetOutgoingMessage msg = NetworkConnctor.CreateMessage();
@@ -88,6 +113,21 @@ namespace HiveSuite.Core
         public IPAddress LocalIP()
         {
             return NetworkConnctor.Configuration.LocalAddress;
+        }
+
+        public bool CommsUp()
+        {
+            if(!ListenClass.CloseConnection && ListenThread.IsAlive)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public void ShutdownNetworking()
+        {
+            ListenClass.CloseConnection = true;
         }
     }
 

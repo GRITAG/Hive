@@ -12,6 +12,7 @@ namespace HiveSuite.Drone
     public class DroneSettings : ISettings
     {
         public Uri ServerUri { get; set; }
+        public int Port { get; set; }
 
         public string DefaultPath
         {
@@ -35,7 +36,8 @@ namespace HiveSuite.Drone
                 JsonSerializer serlizer = new JsonSerializer();
                 DroneSettings settings = (DroneSettings)JsonConvert.DeserializeObject(filePath, typeof(DroneSettings));
 
-                this.ServerUri = settings.ServerUri;
+                ServerUri = settings.ServerUri;
+                Port = settings.Port;
             }
             else
             {

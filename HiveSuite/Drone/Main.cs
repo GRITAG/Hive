@@ -17,7 +17,7 @@ namespace HiveSuite.Drone
 
         public Network ComObject { get; set; }
 
-        public Listen ComListener { get; set; }
+        //public Listen ComListener { get; set; }
 
         public Status CurrentStatus { get; private set; }
         
@@ -122,8 +122,7 @@ namespace HiveSuite.Drone
 
 
             }
-            //TODO: start the commounications thread to start listening for messages or send messages
-            ComObject = new Network();
+            
                        
 
 
@@ -141,12 +140,21 @@ namespace HiveSuite.Drone
 
         private bool ConnectToTaskMaster()
         {
-            throw new NotImplementedException();
+            ComObject.SendDiscovery();
+
+            if(ComObject.PeerCount < 0)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private bool InitilizeComms()
         {
-            throw new NotImplementedException();
+            ComObject = new Network(Settings.Port);
+
+            return ComObject.CommsUp();
         }
 
         private bool LoadSettings()

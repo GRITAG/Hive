@@ -55,9 +55,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\ISettings.cs" />
     <Compile Include="Core\Network.cs" />
     <Compile Include="Core\NetworkMessage.cs" />
     <Compile Include="Core\status.cs" />
+    <Compile Include="Drone\DroneSettings.cs" />
     <Compile Include="Drone\Main.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
