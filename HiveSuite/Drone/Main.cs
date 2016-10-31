@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HiveSuite.Core;
 
-namespace HiveSuite
+namespace HiveSuite.Drone
 {
     
    
@@ -25,8 +25,10 @@ namespace HiveSuite
 
         public State DesiredState { get; private set; }
 
-        public Task CurrentTask { get; private set;
-        }
+        public Task CurrentTask { get; private set; }
+
+        public DroneSettings Settings { get; set; }
+
         public void Main()
         {
 
@@ -149,7 +151,15 @@ namespace HiveSuite
 
         private bool LoadSettings()
         {
-            throw new NotImplementedException();
+            Settings = new DroneSettings();
+            Settings.Load(Settings.DefaultPath);
+
+            if(Settings == null)
+            {
+                return false;
+            }
+
+            return true;
         }
         // TODO: Communications - Layer
         // TODO: Talk to Hive - task
