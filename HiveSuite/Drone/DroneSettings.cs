@@ -28,7 +28,7 @@ namespace HiveSuite.Drone
 
             if (!settingsFile.Directory.Exists)
             {
-                // TODO: Log error - Aaron V.
+                Drone.Loging.Log(LogLevel.Error, "The Settings dir " + settingsFile.Directory + " can not be found");
             }
 
             if (settingsFile.Exists)
@@ -41,8 +41,8 @@ namespace HiveSuite.Drone
             }
             else
             {
-                // TODO: Log error - Aaron V.
-                
+                Drone.Loging.Log(LogLevel.Error, "The Settings file " + filePath + " can not be found");
+
             }
 
         }
