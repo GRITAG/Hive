@@ -84,6 +84,11 @@ namespace HiveSuite.Core
             msg.Write(port);
             NetworkConnctor.SendMessage(msg, NetworkConnctor.Connections, NetDeliveryMethod.ReliableOrdered, 0);
         }
+
+        public IPAddress LocalIP()
+        {
+            return NetworkConnctor.Configuration.LocalAddress;
+        }
     }
 
     public class Listen
