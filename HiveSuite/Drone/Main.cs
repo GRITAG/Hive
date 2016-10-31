@@ -29,6 +29,8 @@ namespace HiveSuite.Drone
 
         public DroneSettings Settings { get; set; }
 
+        public static Logger Loging = new Logger();
+
         public void Main()
         {
 
@@ -130,7 +132,7 @@ namespace HiveSuite.Drone
 
         private void Log(string v, Exception e)
         {
-            throw new NotImplementedException();
+            Loging.Log(LogLevel.Error, v + "\n Exception Information: " + e.ToString());
         }
 
         private void UpdateState(State desiredStatus)

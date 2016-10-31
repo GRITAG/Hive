@@ -17,13 +17,13 @@ namespace HiveSuite.Test
         [SetUp]
         public void Init()
         {
-            Net1 = new Network();
+            Net1 = new Network(1);
         }
 
         [Test(Author ="Aaron V")]
         public void ThreadIsSpinning()
         {
-            Assert.IsTrue(Net1.ListenThread.IsAlive);
+            Assert.IsTrue(Net1.CommsUp());
         }
 
         [Test]
