@@ -1,37 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using HiveSuite.Core;
 
 namespace HiveSuite.Drone
 {
-    
-   
+
+
     /// <summary>
     /// Main loop
     /// </summary>
     public class Drone
     {
 
-        public Network ComObject { get; set; }
+        public static Network ComObject { get; set; }
 
         //public Listen ComListener { get; set; }
 
-        public Status CurrentStatus { get; private set; }
+        public static Status CurrentStatus { get; private set; }
         
-        public State CurrentState { get; private set; }
+        public static  State CurrentState { get; private set; }
 
-        public State DesiredState { get; private set; }
+        public static  State DesiredState { get; private set; }
 
-        public Task CurrentTask { get; private set; }
+        public static Task CurrentTask { get; private set; }
 
-        public DroneSettings Settings { get; set; }
+        public static DroneSettings Settings { get; set; }
 
         public static Logger Loging = new Logger();
 
-        public void Main()
+        public static void Main()
         {
 
             CurrentStatus = Status.NotReadyForWork;
@@ -130,17 +127,17 @@ namespace HiveSuite.Drone
 
         }
 
-        private void Log(string v, Exception e)
+        private static  void Log(string v, Exception e)
         {
             Loging.Log(LogLevel.Error, v + "\n Exception Information: " + e.ToString());
         }
 
-        private void UpdateState(State desiredStatus)
+        private static void UpdateState(State desiredStatus)
         {
             CurrentState = desiredStatus;
         }
 
-        private bool ConnectToTaskMaster()
+        private static bool ConnectToTaskMaster()
         {
             ComObject.SendDiscovery();
 
@@ -152,14 +149,14 @@ namespace HiveSuite.Drone
             return false;
         }
 
-        private bool InitilizeComms()
+        private static bool InitilizeComms()
         {
-            ComObject = new Network(Settings.Port);
+            ComObject = new Network(Settings.Port, Loging);
 
             return ComObject.CommsUp();
         }
 
-        private bool LoadSettings()
+        private static bool LoadSettings()
         {
             Settings = new DroneSettings();
             Settings.Load(Settings.DefaultPath);

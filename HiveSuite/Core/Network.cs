@@ -43,9 +43,13 @@ namespace HiveSuite.Core
             }
         }
 
-        public Network(int port)
+        Logger Logging { get; set; }
+
+        public Network(int port, Logger log)
         {
             Port = port;
+
+            Logging = log;
 
             Messages = new Queue<NetworkMessage>();
             QueueLock = new ReaderWriterLockSlim();
@@ -63,7 +67,7 @@ namespace HiveSuite.Core
             NetworkConnctor = new NetPeer(config);
             NetworkConnctor.Start();
 
-            ListenClass = new Listen(NetworkConnctor, this);
+            ListenClass = new Listen(NetworkConnctor, this, log);
             ListenThread = new Thread(ListenClass.Loop);
             ListenThread.Start();
         }
@@ -138,10 +142,13 @@ namespace HiveSuite.Core
 
         public bool CloseConnection = false;
 
-        public Listen(NetPeer peer, Network net)
+        Logger Logging;
+
+        public Listen(NetPeer peer, Network net, Logger log)
         {
             PeerRef = peer;
             NetRef = net;
+            Logging = log;
         }
 
         public void Loop()
@@ -158,8 +165,7 @@ namespace HiveSuite.Core
                     {
                         case NetIncomingMessageType.UnconnectedData:
                             string orphanData = msg.ReadString();
-                            Console.WriteLine("UnconnectedData: " + orphanData);
-                            break;
+                            Logging.Log(LogLevel.Error,"UnconnectedData: " + orphanData);
                             break;
                         case NetIncomingMessageType.ConnectionApproval:
                             msg.SenderConnection.Approve();
@@ -171,21 +177,21 @@ namespace HiveSuite.Core
                                 case MessageType.String:
                                     break;
                                 case MessageType.PeerInfo:
-                                    Console.WriteLine("Data::PeerInfo BEGIN");
+                                    Logging.Log(LogLevel.Info, "Data::PeerInfo BEGIN");
                                     int byteLenth = msg.ReadInt32();
                                     byte[] addressBytes = msg.ReadBytes(byteLenth);
                                     IPAddress ip = new IPAddress(addressBytes);
                                     int port = msg.ReadInt32();
                                     //connect
                                     IPEndPoint endPoint = new IPEndPoint(ip, port);
-                                    Console.WriteLine("Data::PeerInfo::Detecting if we're connected");
+                                    Logging.Log(LogLevel.Info, "Data::PeerInfo::Detecting if we're connected");
                                     if (PeerRef.GetConnection(endPoint) == null)
                                     {//are we already connected?
                                         //Don't try to connect to ourself!
                                         if (PeerRef.Configuration.LocalAddress.GetHashCode() != endPoint.Address.GetHashCode()
                                                 || PeerRef.Configuration.Port.GetHashCode() != endPoint.Port.GetHashCode())
                                         {
-                                            Console.WriteLine(string.Format("Data::PeerInfo::Initiate new connection to: {0}:{1}",
+                                            Logging.Log(LogLevel.Info, string.Format("Data::PeerInfo::Initiate new connection to: {0}:{1}",
                                                 endPoint.Address.ToString(), endPoint.Port.ToString()));
                                             PeerRef.Connect(endPoint);
                                         }
@@ -202,14 +208,14 @@ namespace HiveSuite.Core
                             PeerRef.Connect(msg.SenderEndPoint);
                             break;
                         default:
-                            Console.WriteLine("ReceivePeersData Unknown type: " + msg.MessageType.ToString());
+                            Logging.Log(LogLevel.Error, "ReceivePeersData Unknown type: " + msg.MessageType.ToString());
                             try
                             {
                                 Console.WriteLine(msg.ReadString());
                             }
                             catch
                             {
-                                Console.WriteLine("Couldn't parse unknown to string.");
+                                Logging.Log(LogLevel.Error, "Couldn't parse unknown to string.");
                             }
                             break;
                     }

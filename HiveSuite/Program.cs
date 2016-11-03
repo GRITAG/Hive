@@ -10,6 +10,12 @@ namespace HiveSuite
     {
         static void Main(string[] args)
         {
+            switch(args[0].ToLower())
+            {
+                case "drone":
+                    Drone.Drone.Main();
+                    break;
+            }
         }
     }
 }
