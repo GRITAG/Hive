@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using HiveSuite.Core;
+using HiveSuite.Core.Network;
 
 namespace HiveSuite.Drone
 {
@@ -28,7 +29,7 @@ namespace HiveSuite.Drone
 
         public static Logger Loging = new Logger();
 
-        public static void Main()
+        public static void MainLoop()
         {
 
             CurrentStatus = Status.NotReadyForWork;
@@ -100,6 +101,7 @@ namespace HiveSuite.Drone
                         break;
                     case State.Ready:
                         CurrentStatus = Status.ReadyForWork;
+                        
                         break;
                     default:
                         break;

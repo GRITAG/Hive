@@ -1,4 +1,5 @@
 ﻿using HiveSuite.Core;
+using HiveSuite.Core.Network;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

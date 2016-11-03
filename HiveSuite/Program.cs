@@ -13,7 +13,7 @@ namespace HiveSuite
             switch(args[0].ToLower())
             {
                 case "drone":
-                    Drone.Drone.Main();
+                    Drone.Drone.MainLoop();
                     break;
             }
         }
