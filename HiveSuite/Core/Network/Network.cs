@@ -24,6 +24,9 @@ namespace HiveSuite.Core.Network
 
         int Port { get; set; }
 
+        /// <summary>
+        /// Returns connected peers
+        /// </summary>
         public List<NetConnection> Peers
         {
             get
@@ -32,6 +35,9 @@ namespace HiveSuite.Core.Network
             }
         }
 
+        /// <summary>
+        /// Returns the count of connected peers
+        /// </summary>
         public int PeerCount
         {
             get
@@ -42,6 +48,11 @@ namespace HiveSuite.Core.Network
 
         Logger Logging { get; set; }
 
+        /// <summary>
+        /// Creates a network object
+        /// </summary>
+        /// <param name="port">the port to communicate on</param>
+        /// <param name="log">Logging to use</param>
         public Network(int port, Logger log)
         {
             Port = port;
@@ -67,8 +78,19 @@ namespace HiveSuite.Core.Network
             ListenClass = new Listen(NetworkConnctor, this, log);
             ListenThread = new Thread(ListenClass.Loop);
             ListenThread.Start();
+
+
         }
 
+        public Network(IPAddress server, int port, Logger log) : this(port, log)
+        {
+            NetworkConnctor.Connect(new IPEndPoint(server, port));
+        }
+
+        /// <summary>
+        /// Reads a NetworkMessage from the top of the stack (dequeues)
+        /// </summary>
+        /// <returns>Network Message</returns>
         public NetworkMessage ReadMessage()
         {
             QueueLock.EnterReadLock();
@@ -78,6 +100,10 @@ namespace HiveSuite.Core.Network
             return nextMessage;
         }
 
+        /// <summary>
+        /// Returns all current network messages (dequeues)
+        /// </summary>
+        /// <returns>List of NetworkMessages</returns>
         public List<NetworkMessage> ReadMessages()
         {
             QueueLock.EnterReadLock();
@@ -88,6 +114,10 @@ namespace HiveSuite.Core.Network
             return nextMessages;
         }
 
+        /// <summary>
+        /// Adds a Network Message directly to the queue
+        /// </summary>
+        /// <param name="toAdd">message to add</param>
         public void AddMessage(NetworkMessage toAdd)
         {
             QueueLock.EnterReadLock();
@@ -95,11 +125,19 @@ namespace HiveSuite.Core.Network
             QueueLock.ExitReadLock();
         }
 
+        /// <summary>
+        /// Sends a discovery message that will trigger connection to all other peers that respond
+        /// </summary>
         public void SendDiscovery()
         {
             NetworkConnctor.DiscoverLocalPeers(Port);
         }
 
+        /// <summary>
+        /// Sends peer info to the end point that should cause connection
+        /// </summary>
+        /// <param name="ip">ip end point of the peer</param>
+        /// <param name="port">port to connect to</param>
         public void SendPeerInfo(IPAddress ip, int port)
         {
             NetOutgoingMessage msg = NetworkConnctor.CreateMessage();

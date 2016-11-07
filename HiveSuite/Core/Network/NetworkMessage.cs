@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace HiveSuite.Core.Network
 {
+    /// <summary>
+    /// Messging object used to send data between drones and server
+    /// </summary>
     public class NetworkMessage
     {
         public string Message { get; set; }
@@ -20,6 +23,10 @@ namespace HiveSuite.Core.Network
             Data = data;
         }
 
+        /// <summary>
+        /// converts json string to a network message
+        /// </summary>
+        /// <param name="json">json formated string</param>
         public NetworkMessage(string json)
         {
             NetworkMessage temp = new NetworkMessage();
@@ -29,6 +36,10 @@ namespace HiveSuite.Core.Network
             Data = temp.Data;
         }
 
+        /// <summary>
+        /// Override used to retrieve a json string formated network message
+        /// </summary>
+        /// <returns>Json formated network object</returns>
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);
