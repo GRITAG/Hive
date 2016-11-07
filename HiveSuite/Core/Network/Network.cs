@@ -149,6 +149,10 @@ namespace HiveSuite.Core.Network
             NetworkConnctor.SendMessage(msg, NetworkConnctor.Connections, NetDeliveryMethod.ReliableOrdered, 0);
         }
 
+        /// <summary>
+        /// return the current ip used for c
+        /// </summary>
+        /// <returns></returns>
         public IPAddress LocalIP()
         {
             return NetworkConnctor.Configuration.LocalAddress;
