@@ -124,6 +124,11 @@ namespace HiveSuite.Drone
             Loging.Log(LogLevel.Error, v + "\n Exception Information: " + e.ToString());
         }
 
+        private static void Log(string v, LogLevel level = LogLevel.Info)
+        {
+            Loging.Log(LogLevel.Info, v);
+        }
+
         private static bool ConnectToTaskMaster()
         {
             ComObject.SendMessage(new NetworkMessage
@@ -161,11 +166,17 @@ namespace HiveSuite.Drone
             Settings = new DroneSettings();
             Settings.Load(Settings.DefaultPath);
 
-            if(string.IsNullOrEmpty(Settings.ServerAddress) || Settings.Port == 0)
+            if (string.IsNullOrEmpty(Settings.ServerAddress) || Settings.Port == 0)
             {
-                return false;
+                // Gen config and reload
+                Log("Could not find a config file for hive under " + Settings.DefaultPath + ". Creating a new default config.");
+                DroneSettings.GenerateConfig();
+                Settings.Load(Settings.DefaultPath);
+                if (string.IsNullOrEmpty(Settings.ServerAddress) || Settings.Port == 0)
+                {
+                    return false;
+                }
             }
-
             return true;
         }
         // TODO: Communications - Layer
