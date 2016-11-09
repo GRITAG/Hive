@@ -14,8 +14,6 @@ namespace HiveSuite.Drone
     {
         public string ServerAddress { get; set; }
         public int Port { get; set; }
-
-
         [JsonIgnore]
         public IPAddress ServerIP
         {
@@ -24,7 +22,6 @@ namespace HiveSuite.Drone
                 return IPAddress.Parse(ServerAddress);
             }
         }
-
         [JsonIgnore]
         public string DefaultPath
         {
@@ -32,6 +29,12 @@ namespace HiveSuite.Drone
             {
                 return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Hive\\Drone\\settings.json";
             }
+        }
+
+        public DroneSettings()
+        {
+            ServerAddress = string.Empty;
+            Port = 0;
         }
 
         public void Load(string filePath)
@@ -46,10 +49,11 @@ namespace HiveSuite.Drone
             if (settingsFile.Exists)
             {
                 JsonSerializer serlizer = new JsonSerializer();
-                DroneSettings settings = (DroneSettings)JsonConvert.DeserializeObject(filePath, typeof(DroneSettings));
+                DroneSettings settings = (DroneSettings)JsonConvert.DeserializeObject(File.ReadAllText(filePath), typeof(DroneSettings));
 
                 ServerAddress = settings.ServerAddress;
                 Port = settings.Port;
+                ServerAddress = settings.ServerAddress;
             }
             else
             {
@@ -82,6 +86,15 @@ namespace HiveSuite.Drone
                 }
             }
 
+        }
+
+        public static void GenerateConfig()
+        {
+            DroneSettings Settings = new DroneSettings();
+            Settings.Port = 1000;
+            Settings.ServerAddress = "192.168.1.100";
+
+            Settings.Save(Settings.DefaultPath);
         }
     }
 }

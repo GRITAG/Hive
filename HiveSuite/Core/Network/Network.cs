@@ -59,8 +59,8 @@ namespace HiveSuite.Core.Network
 
             Logging = log;
 
-            Messages = new Queue<NetworkMessage>();
-            QueueLock = new ReaderWriterLockSlim();
+            Messages = new NetMessageQueue();
+            
 
             NetPeerConfiguration config = new NetPeerConfiguration("Swarm")
             {

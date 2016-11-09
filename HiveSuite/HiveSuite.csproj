@@ -67,9 +67,9 @@
     <Compile Include="Core\Network\Network.cs" />
     <Compile Include="Core\Network\NetworkBase.cs" />
     <Compile Include="Core\Network\NetworkMessage.cs" />
-    <Compile Include="Core\status.cs" />
     <Compile Include="Drone\DroneSettings.cs" />
     <Compile Include="Drone\Drone.cs" />
+    <Compile Include="Drone\DroneState.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test\NetworkTests.cs" />

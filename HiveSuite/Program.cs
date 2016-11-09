@@ -10,7 +10,7 @@ namespace HiveSuite
     {
         static void Main(string[] args)
         {
-            args = new string[] { "configdrone" };
+            args = new string[] { "drone" };
 
             switch(args[0].ToLower())
             {
@@ -18,7 +18,7 @@ namespace HiveSuite
                     Drone.Drone.MainLoop();
                     break;
                 case "configdrone":
-                    Drone.Drone.GenerateConfig();
+                    Drone.DroneSettings.GenerateConfig();
                     break;
             }
         }

@@ -14,32 +14,21 @@ namespace HiveSuite.Drone
     public class Drone
     {
 
-        public static Network ComObject { get; set; }
+        protected static Network ComObject { get; set; }
 
-        //public Listen ComListener { get; set; }
+        protected static DroneState States { get; set; }
 
-        public static Status CurrentStatus { get; private set; }
-        
-        public static  State CurrentState { get; private set; }
+        protected static Task CurrentTask { get; private set; }
 
-        public static  State DesiredState { get; private set; }
-
-        public static Task CurrentTask { get; private set; }
-
-        public static DroneSettings Settings { get; set; }
+        protected static DroneSettings Settings { get; set; }
 
         public static Logger Loging = new Logger();
 
         public static void MainLoop()
         {
-
-            CurrentStatus = Status.NotReadyForWork;
-            CurrentState = State.StartingUP;
-            DesiredState = State.Ready;
-
-            while (CurrentState!=State.ShuttingDown)
+            while (States.CurrentState !=State.ShuttingDown)
             {
-                switch (CurrentState)
+                switch (States.CurrentState)
                 {
                     case State.StartingUP:
                         try
@@ -51,57 +40,57 @@ namespace HiveSuite.Drone
                                 if (ConnectToTaskMaster())
                                 {
                                     //If we can talk to the task master We should be ready to do something
-                                    UpdateState(DesiredState);
+                                    States.UpdateState(States.DesiredState);
                                     break;
                                 }
                                 else
                                 {
-                                    UpdateState(State.ErrorFault);
+                                    States.UpdateState(State.ErrorFault);
                                 }
                             }
                             else
                             {
-                                UpdateState(State.ShuttingDown);
+                                States.UpdateState(State.ShuttingDown);
                             }
                             
                         }
                         catch (Exception e)
                         {
 
-                            UpdateState(State.ShuttingDown);
+                            States.UpdateState(State.ShuttingDown);
                             Log("Fail During Startup", e);
                         }
 
                         break;
                     case State.StartingTask:
-                        CurrentStatus = Status.NotReadyForWork;
+                        States.UpdateStatus(Status.NotReadyForWork);
                         //TODO: start processing the tasks or at least doing the set up
                         break;
                     case State.StoppingTask:
                         //TODO: Start Code to tear down any worker threads or at least acknowledge that the thread is done
-                        CurrentStatus = Status.NotReadyForWork;
+                        States.UpdateStatus(Status.NotReadyForWork);
                         break;
                     case State.CleaningUP:
                         //TODO: clean up any assets left over from the execution
-                        CurrentStatus = Status.NotReadyForWork;
+                        States.UpdateStatus(Status.NotReadyForWork);
                         break;
                     case State.ResettingWorkspace:
                         //TODO: Clean up any working folders 
-                        CurrentStatus = Status.NotReadyForWork;
+                        States.UpdateStatus(Status.NotReadyForWork);
                         break;
                     case State.Restarting:
                         //TODO: code for closing coms and flusing
-                        CurrentStatus = Status.NotReadyForWork;
+                        States.UpdateStatus(Status.NotReadyForWork);
                         break;
                     case State.ShuttingDown:
-                        CurrentStatus = Status.NotReadyForWork;
+                        States.UpdateStatus(Status.NotReadyForWork);
                         break;
                     case State.ErrorFault:
                         //TODO: Need to Log All status and objects before shutting down 
-                        CurrentStatus = Status.NotReadyForWork;
+                        States.UpdateStatus(Status.NotReadyForWork);
                         break;
                     case State.Ready:
-                        CurrentStatus = Status.ReadyForWork;
+                        States.UpdateStatus(Status.ReadyForWork);
                         
                         break;
                     default:
@@ -109,7 +98,7 @@ namespace HiveSuite.Drone
                 }
 
 
-                switch (CurrentStatus)
+                switch (States.CurrentStatus)
                 {
                     case Status.ReadyForWork:
                         //Connect to TaskMaster and Check for Available Task
@@ -130,23 +119,9 @@ namespace HiveSuite.Drone
 
         }
 
-        public static void GenerateConfig()
-        {
-            Settings = new DroneSettings();
-            Settings.Port = 1000;
-            Settings.ServerAddress = "192.168.1.100";
-
-            Settings.Save(Settings.DefaultPath);
-        }
-
         private static  void Log(string v, Exception e)
         {
             Loging.Log(LogLevel.Error, v + "\n Exception Information: " + e.ToString());
-        }
-
-        private static void UpdateState(State desiredStatus)
-        {
-            CurrentState = desiredStatus;
         }
 
         private static bool ConnectToTaskMaster()
@@ -156,9 +131,17 @@ namespace HiveSuite.Drone
                 Message = "Ready"
             }, Settings.ServerIP, Settings.Port);
 
-            ComObject.
+            NetworkMessage ackMsg;
+            DateTime StartTime = DateTime.Now;
 
-            if(ComObject.PeerCount < 0)
+            do
+            {
+                ackMsg = ComObject.PullMessage("Added to Server");
+
+            }
+            while (ackMsg == null && (DateTime.Now - StartTime) < new TimeSpan(0,0,60));
+
+            if(ComObject.PeerCount < 0 && ackMsg != null)
             {
                 return true;
             }
@@ -178,7 +161,7 @@ namespace HiveSuite.Drone
             Settings = new DroneSettings();
             Settings.Load(Settings.DefaultPath);
 
-            if(Settings == null)
+            if(string.IsNullOrEmpty(Settings.ServerAddress) || Settings.Port == 0)
             {
                 return false;
             }

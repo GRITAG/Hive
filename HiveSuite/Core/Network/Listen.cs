@@ -45,9 +45,7 @@ namespace HiveSuite.Core.Network
                             switch (msg.ReadString())
                             {
                                 case MessageType.String:
-                                    QueueLock.EnterReadLock();
                                     Messages.Enqueue(new NetworkMessage(msg.ReadString()));
-                                    QueueLock.ExitReadLock();
                                     break;
                                 case MessageType.PeerInfo:
                                     Logging.Log(LogLevel.Info, "Data::PeerInfo BEGIN");
