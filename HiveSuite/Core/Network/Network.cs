@@ -93,11 +93,7 @@ namespace HiveSuite.Core.Network
         /// <returns>Network Message</returns>
         public NetworkMessage ReadMessage()
         {
-            QueueLock.EnterReadLock();
-            NetworkMessage nextMessage = Messages.Dequeue();
-            QueueLock.ExitReadLock();
-
-            return nextMessage;
+            return Messages.Dequeue();
         }
 
         /// <summary>
@@ -106,12 +102,12 @@ namespace HiveSuite.Core.Network
         /// <returns>List of NetworkMessages</returns>
         public List<NetworkMessage> ReadMessages()
         {
-            QueueLock.EnterReadLock();
-            List<NetworkMessage> nextMessages = Messages.ToList();
-            Messages.Clear();
-            QueueLock.ExitReadLock();
+            return Messages.Dump();
+        }
 
-            return nextMessages;
+        public NetworkMessage PullMessage(string msgText)
+        {
+            return Messages.Pull(msgText);
         }
 
         /// <summary>
@@ -120,9 +116,7 @@ namespace HiveSuite.Core.Network
         /// <param name="toAdd">message to add</param>
         public void AddMessage(NetworkMessage toAdd)
         {
-            QueueLock.EnterReadLock();
             Messages.Enqueue(toAdd);
-            QueueLock.ExitReadLock();
         }
 
         /// <summary>

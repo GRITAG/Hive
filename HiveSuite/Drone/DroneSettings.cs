@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,9 +12,20 @@ namespace HiveSuite.Drone
 {
     public class DroneSettings : ISettings
     {
-        public Uri ServerUri { get; set; }
+        public string ServerAddress { get; set; }
         public int Port { get; set; }
 
+
+        [JsonIgnore]
+        public IPAddress ServerIP
+        {
+            get
+            {
+                return IPAddress.Parse(ServerAddress);
+            }
+        }
+
+        [JsonIgnore]
         public string DefaultPath
         {
             get
@@ -36,7 +48,7 @@ namespace HiveSuite.Drone
                 JsonSerializer serlizer = new JsonSerializer();
                 DroneSettings settings = (DroneSettings)JsonConvert.DeserializeObject(filePath, typeof(DroneSettings));
 
-                ServerUri = settings.ServerUri;
+                ServerAddress = settings.ServerAddress;
                 Port = settings.Port;
             }
             else

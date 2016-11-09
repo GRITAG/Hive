@@ -63,6 +63,7 @@
     <Compile Include="Core\Logger.cs" />
     <Compile Include="Core\Network\Listen.cs" />
     <Compile Include="Core\Network\MessageType.cs" />
+    <Compile Include="Core\Network\NetMessageQueue.cs" />
     <Compile Include="Core\Network\Network.cs" />
     <Compile Include="Core\Network\NetworkBase.cs" />
     <Compile Include="Core\Network\NetworkMessage.cs" />

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using HiveSuite.Core;
 using HiveSuite.Core.Network;
+using System.Net;
 
 namespace HiveSuite.Drone
 {
@@ -129,6 +130,15 @@ namespace HiveSuite.Drone
 
         }
 
+        public static void GenerateConfig()
+        {
+            Settings = new DroneSettings();
+            Settings.Port = 1000;
+            Settings.ServerAddress = "192.168.1.100";
+
+            Settings.Save(Settings.DefaultPath);
+        }
+
         private static  void Log(string v, Exception e)
         {
             Loging.Log(LogLevel.Error, v + "\n Exception Information: " + e.ToString());
@@ -141,7 +151,12 @@ namespace HiveSuite.Drone
 
         private static bool ConnectToTaskMaster()
         {
-            ComObject.SendDiscovery();
+            ComObject.SendMessage(new NetworkMessage
+            {
+                Message = "Ready"
+            }, Settings.ServerIP, Settings.Port);
+
+            ComObject.
 
             if(ComObject.PeerCount < 0)
             {
@@ -153,7 +168,7 @@ namespace HiveSuite.Drone
 
         private static bool InitilizeComms()
         {
-            ComObject = new Network(Settings.Port, Loging);
+            ComObject = new Network(Settings.ServerIP, Settings.Port, Loging);
 
             return ComObject.CommsUp();
         }
@@ -176,5 +191,7 @@ namespace HiveSuite.Drone
         // TODO: Execute Task - 
         // TODO: Cleanup - task
         // TODO: Close Comm - task
+
+
     }
 }

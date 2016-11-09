@@ -16,11 +16,6 @@ namespace HiveSuite.Core.Network
         /// <summary>
         /// application accessable network messages
         /// </summary>
-        public static Queue<NetworkMessage> Messages { get; set; }
-
-        /// <summary>
-        /// thread locking for both Listen and Network
-        /// </summary>
-        public static ReaderWriterLockSlim QueueLock { get; set; }
+        public static NetMessageQueue Messages { get; set; }
     }
 }
