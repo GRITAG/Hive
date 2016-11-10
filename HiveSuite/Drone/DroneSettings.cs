@@ -31,12 +31,19 @@ namespace HiveSuite.Drone
             }
         }
 
+        /// <summary>
+        /// Creates a drone settings object with default values
+        /// </summary>
         public DroneSettings()
         {
             ServerAddress = string.Empty;
             Port = 0;
         }
 
+        /// <summary>
+        /// Loads a drone settings file
+        /// </summary>
+        /// <param name="filePath">full path to file</param>
         public void Load(string filePath)
         {
             FileInfo settingsFile = new FileInfo(filePath);
@@ -63,6 +70,10 @@ namespace HiveSuite.Drone
 
         }
 
+        /// <summary>
+        /// Saves a drone settings file
+        /// </summary>
+        /// <param name="filePath">full path to save file</param>
         public void Save(string filePath)
         {
             FileInfo settingsFile = new FileInfo(filePath);
@@ -88,6 +99,9 @@ namespace HiveSuite.Drone
 
         }
 
+        /// <summary>
+        /// Creates a default config and saves it to the default path
+        /// </summary>
         public static void GenerateConfig()
         {
             DroneSettings Settings = new DroneSettings();

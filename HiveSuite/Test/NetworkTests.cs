@@ -27,7 +27,7 @@ namespace HiveSuite.Test
             Assert.IsTrue(Net1.CommsUp());
         }
 
-        [Test]
+        [Test(Author = "Aaron V")]
         public void Play()
         {
             Net1.LocalIP();
