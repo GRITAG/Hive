@@ -101,7 +101,11 @@ namespace HiveSuite.Drone
                 switch (States.CurrentStatus)
                 {
                     case Status.ReadyForWork:
-                        //Connect to TaskMaster and Check for Available Task
+                        ComObject.SendMessage(NetworkMessages.RequestTask);
+                        States.UpdateStatus(Status.WaitingForWork);
+                        break;
+                    case Status.WaitingForWork:
+
                         break;
                     case Status.NotReadyForWork:
 

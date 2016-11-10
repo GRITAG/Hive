@@ -36,7 +36,8 @@ namespace HiveSuite.Drone
     {
 
         ReadyForWork,
-        NotReadyForWork
+        WaitingForWork,
+        NotReadyForWork,
 
     }
 

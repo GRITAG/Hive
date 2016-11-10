@@ -22,6 +22,8 @@ namespace HiveSuite.Core.Network
 
         Thread ListenThread { get; set; }
 
+        IPAddress Server { get; set; }
+
         int Port { get; set; }
 
         /// <summary>
@@ -84,7 +86,10 @@ namespace HiveSuite.Core.Network
 
         public Network(IPAddress server, int port, Logger log) : this(port, log)
         {
-            NetworkConnctor.Connect(new IPEndPoint(server, port));
+            Server = server;
+            Port = port;
+
+            NetworkConnctor.Connect(new IPEndPoint(Server, Port));
         }
 
         /// <summary>
@@ -170,6 +175,11 @@ namespace HiveSuite.Core.Network
         public void SendMessage(NetworkMessage msg, IPAddress address, int port)
         {
             NetworkConnctor.SendMessage(NetworkConnctor.CreateMessage(msg.ToString()), NetworkConnctor.GetConnection(new IPEndPoint(address, port)), NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public void SendMessage(NetworkMessage msg)
+        {
+            NetworkConnctor.SendMessage(NetworkConnctor.CreateMessage(msg.ToString()), NetworkConnctor.GetConnection(new IPEndPoint(Server, Port)), NetDeliveryMethod.ReliableOrdered);
         }
     }
 
