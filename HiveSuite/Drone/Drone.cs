@@ -121,6 +121,23 @@ namespace HiveSuite.Drone
                 // get all network messages
                 // check for state needed messages first
                 // react to other messages
+                switch(States.CurrentState)
+                {
+                    case State.Ready:
+                        switch(States.CurrentStatus)
+                        {
+                            case Status.ReadyForWork:
+                                NetworkMessage incoming = ComObject.PullMessage("Incoming Package");
+                                if (incoming != null)
+                                {
+                                    States.UpdateStatus(Status.NotReadyForWork);
+
+                                }
+                                break;
+                        }
+                        break;
+                }
+                ComObject.PullMessage("");
                 #endregion
 
             }
