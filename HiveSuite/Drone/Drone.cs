@@ -28,6 +28,7 @@ namespace HiveSuite.Drone
         {
             while (States.CurrentState !=State.ShuttingDown)
             {
+                #region StateManagment
                 switch (States.CurrentState)
                 {
                     case State.StartingUP:
@@ -96,8 +97,9 @@ namespace HiveSuite.Drone
                     default:
                         break;
                 }
+                #endregion
 
-
+                #region StatusManagment
                 switch (States.CurrentStatus)
                 {
                     case Status.ReadyForWork:
@@ -113,8 +115,13 @@ namespace HiveSuite.Drone
                     default:
                         break;
                 }
+                #endregion
 
-
+                #region NetMessageManagment
+                // get all network messages
+                // check for state needed messages first
+                // react to other messages
+                #endregion
 
             }
             
