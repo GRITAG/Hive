@@ -8,6 +8,9 @@ namespace HiveSuite.Queen
 {
     public class Queen
     {
+        /// <summary>
+        /// The main loop for the queen
+        /// </summary>
         public static void MainLoop()
         {
 

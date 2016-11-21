@@ -11,20 +11,9 @@ namespace HiveSuite.Drone
     /// <summary>
     /// Main loop
     /// </summary>
-    public class Drone
+    public class Drone : BaseNetworked
     {
-
-        protected static Network ComObject { get; set; }
-
-        protected static DroneState States { get; set; }
-
-        protected static Task CurrentTask { get; private set; }
-
-        protected static DroneSettings Settings { get; set; }
-
-        public static Logger Loging = new Logger();
-
-        public static void MainLoop()
+        public override void MainLoop()
         {
             while (States.CurrentState !=State.ShuttingDown)
             {
@@ -141,55 +130,16 @@ namespace HiveSuite.Drone
                 #endregion
 
             }
-            
-                       
-
-
         }
 
-        private static  void Log(string v, Exception e)
-        {
-            Loging.Log(LogLevel.Error, v + "\n Exception Information: " + e.ToString());
-        }
-
-        private static void Log(string v, LogLevel level = LogLevel.Info)
-        {
-            Loging.Log(LogLevel.Info, v);
-        }
-
-        private static bool ConnectToTaskMaster()
-        {
-            ComObject.SendMessage(new NetworkMessage
-            {
-                Message = "Ready"
-            }, Settings.ServerIP, Settings.Port);
-
-            NetworkMessage ackMsg;
-            DateTime StartTime = DateTime.Now;
-
-            do
-            {
-                ackMsg = ComObject.PullMessage("Added to Server");
-
-            }
-            while (ackMsg == null && (DateTime.Now - StartTime) < new TimeSpan(0,0,60));
-
-            if(ComObject.PeerCount < 0 && ackMsg != null)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private static bool InitilizeComms()
+        protected override bool InitilizeComms()
         {
             ComObject = new Network(Settings.ServerIP, Settings.Port, Loging);
 
             return ComObject.CommsUp();
         }
 
-        private static bool LoadSettings()
+        protected override bool LoadSettings()
         {
             Settings = new DroneSettings();
             Settings.Load(Settings.DefaultPath);
@@ -207,6 +157,32 @@ namespace HiveSuite.Drone
             }
             return true;
         }
+
+        private bool ConnectToTaskMaster()
+        {
+            ComObject.SendMessage(new NetworkMessage
+            {
+                Message = "Ready"
+            }, Settings.ServerIP, Settings.Port);
+
+            NetworkMessage ackMsg;
+            DateTime StartTime = DateTime.Now;
+
+            do
+            {
+                ackMsg = ComObject.PullMessage("Added to Server");
+
+            }
+            while (ackMsg == null && (DateTime.Now - StartTime) < new TimeSpan(0, 0, 60));
+
+            if (ComObject.PeerCount < 0 && ackMsg != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         // TODO: Communications - Layer
         // TODO: Talk to Hive - task
         // TODO: Init Binary Cache - task / layer
