@@ -13,6 +13,16 @@ namespace HiveSuite.Drone
     /// </summary>
     public class Drone : BaseNetworked
     {
+        /// <summary>
+        /// Drone state object
+        /// </summary>
+        protected DroneState States { get; set; }
+
+        /// <summary>
+        /// The current task for the drone
+        /// </summary>
+        protected Task CurrentTask { get; private set; }
+
         public override void MainLoop()
         {
             while (States.CurrentState !=State.ShuttingDown)
@@ -134,23 +144,24 @@ namespace HiveSuite.Drone
 
         protected override bool InitilizeComms()
         {
-            ComObject = new Network(Settings.ServerIP, Settings.Port, Loging);
+            ComObject = new Network(((DroneSettings)Settings).ServerIP, ((DroneSettings)Settings).Port, Loging);
 
             return ComObject.CommsUp();
         }
 
         protected override bool LoadSettings()
         {
-            Settings = new DroneSettings();
+            Settings = new DroneSettings(Loging);
             Settings.Load(Settings.DefaultPath);
 
-            if (string.IsNullOrEmpty(Settings.ServerAddress) || Settings.Port == 0)
+            if (string.IsNullOrEmpty(((DroneSettings)Settings).ServerAddress) || ((DroneSettings)Settings).Port == 0)
             {
                 // Gen config and reload
                 Log("Could not find a config file for hive under " + Settings.DefaultPath + ". Creating a new default config.");
-                DroneSettings.GenerateConfig();
+                Settings = new DroneSettings(Loging);
+                Settings.GenerateConfig();
                 Settings.Load(Settings.DefaultPath);
-                if (string.IsNullOrEmpty(Settings.ServerAddress) || Settings.Port == 0)
+                if (string.IsNullOrEmpty(((DroneSettings)Settings).ServerAddress) || ((DroneSettings)Settings).Port == 0)
                 {
                     return false;
                 }
@@ -163,7 +174,7 @@ namespace HiveSuite.Drone
             ComObject.SendMessage(new NetworkMessage
             {
                 Message = "Ready"
-            }, Settings.ServerIP, Settings.Port);
+            }, ((DroneSettings)Settings).ServerIP, ((DroneSettings)Settings).Port);
 
             NetworkMessage ackMsg;
             DateTime StartTime = DateTime.Now;

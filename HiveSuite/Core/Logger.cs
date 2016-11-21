@@ -9,7 +9,7 @@ namespace HiveSuite.Core
 {
     public class Logger
     {
-        NLog.Logger Loging = LogManager.GetLogger("Hive");
+        private static NLog.Logger Loging = LogManager.GetLogger("Hive");
 
         public Logger()
         {

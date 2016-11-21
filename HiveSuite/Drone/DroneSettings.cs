@@ -1,5 +1,6 @@
 ﻿using HiveSuite.Core;
 using Newtonsoft.Json;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,10 +32,12 @@ namespace HiveSuite.Drone
             }
         }
 
+        private Core.Logger Logging { get; set; }
+
         /// <summary>
         /// Creates a drone settings object with default values
         /// </summary>
-        public DroneSettings()
+        public DroneSettings(Core.Logger logger)
         {
             ServerAddress = string.Empty;
             Port = 0;
@@ -50,7 +53,7 @@ namespace HiveSuite.Drone
 
             if (!settingsFile.Directory.Exists)
             {
-                Drone.Loging.Log(LogLevel.Error, "The Settings dir " + settingsFile.Directory + " can not be found");
+                Logging.Log(Core.LogLevel.Error, "The Settings dir " + settingsFile.Directory + " can not be found");
             }
 
             if (settingsFile.Exists)
@@ -64,7 +67,7 @@ namespace HiveSuite.Drone
             }
             else
             {
-                Drone.Loging.Log(LogLevel.Error, "The Settings file " + filePath + " can not be found");
+                Logging.Log(Core.LogLevel.Error, "The Settings file " + filePath + " can not be found");
 
             }
 
@@ -102,13 +105,13 @@ namespace HiveSuite.Drone
         /// <summary>
         /// Creates a default config and saves it to the default path
         /// </summary>
-        public static void GenerateConfig()
+        public void GenerateConfig()
         {
-            DroneSettings Settings = new DroneSettings();
-            Settings.Port = 1000;
-            Settings.ServerAddress = "192.168.1.100";
+            Port = 1000;
+            ServerAddress = "192.168.1.100";
 
-            Settings.Save(Settings.DefaultPath);
+            Save(DefaultPath);
         }
+
     }
 }

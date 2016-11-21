@@ -7,15 +7,17 @@ using System.Threading.Tasks;
 
 namespace HiveSuite.Core
 {
+    /// <summary>
+    /// Object is used to house base and shared functions between the drone and queen main objects
+    /// </summary>
     public abstract class BaseNetworked
     {
+        /// <summary>
+        /// Main network object
+        /// </summary>
         protected Network.Network ComObject { get; set; }
-
-        protected DroneState States { get; set; }
-
-        protected Task CurrentTask { get; private set; }
-
-        protected DroneSettings Settings { get; set; }
+        
+        protected ISettings Settings { get; set; }
 
         public Logger Loging = new Logger();
 
@@ -30,6 +32,11 @@ namespace HiveSuite.Core
         }
 
         public abstract void MainLoop();
+
+        public void GenerateConfig()
+        {
+            Settings.GenerateConfig();
+        }
 
         protected abstract bool InitilizeComms();
 
