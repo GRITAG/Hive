@@ -5,7 +5,7 @@ using System;
 namespace HiveSuite.Test
 {
     [TestFixture]
-    public class NetworkTests
+    public class NetworkTests : UnitTest
     {
         Network Net1;
         //Network Net2;

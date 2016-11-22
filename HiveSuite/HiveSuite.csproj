@@ -69,6 +69,7 @@
     <Compile Include="Core\Network\NetworkBase.cs" />
     <Compile Include="Core\Network\NetworkMessage.cs" />
     <Compile Include="Core\Network\NetworkMessages.cs" />
+    <Compile Include="Core\StaticState.cs" />
     <Compile Include="Core\TaskPackage.cs" />
     <Compile Include="Drone\DroneSettings.cs" />
     <Compile Include="Drone\Drone.cs" />
@@ -76,8 +77,10 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queen\Queen.cs" />
+    <Compile Include="Test\DroneSettingsTests.cs" />
     <Compile Include="Test\NetMessageQueueTests.cs" />
     <Compile Include="Test\NetworkTests.cs" />
+    <Compile Include="Test\UnitTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

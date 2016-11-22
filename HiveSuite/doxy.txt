@@ -1,0 +1,5 @@
+/* \namespace HiveSuite.Core
+    \brief The core and shared code for all Base objects
+    
+    The core and shared code for all Base objects
+*/

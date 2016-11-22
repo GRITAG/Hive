@@ -1,15 +1,11 @@
 ﻿using HiveSuite.Core.Network;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HiveSuite.Test
 {
     [TestFixture]
-    public class NetMessageQueueTests
+    public class NetMessageQueueTests : UnitTest
     {
         NetMessageQueue Queue { get; set; }
 

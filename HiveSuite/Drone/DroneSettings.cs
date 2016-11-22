@@ -37,6 +37,11 @@ namespace HiveSuite.Drone
         {
             get
             {
+                if(StaticState.unitTesting)
+                {
+                    return Directory.GetCurrentDirectory() + "\\settings.json";
+                }
+
                 return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Hive\\Drone\\settings.json";
             }
         }
@@ -77,6 +82,7 @@ namespace HiveSuite.Drone
             else
             {
                 Logging.Log(Core.LogLevel.Error, "The Settings file " + filePath + " can not be found");
+                throw new FileNotFoundException("Could not find the settings file: " + filePath);
 
             }
 
