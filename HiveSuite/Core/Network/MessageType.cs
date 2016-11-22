@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HiveSuite.Core.Network
+﻿namespace HiveSuite.Core.Network
 {
+    /// <summary>
+    /// Simple String / Object collection used as a fancey Enum
+    /// </summary>
     public class MessageType
     {
         public const string Json = "Json";

@@ -13,8 +13,17 @@ namespace HiveSuite.Drone
 {
     public class DroneSettings : ISettings
     {
+        /// <summary>
+        /// Server address to connect to 
+        /// </summary>
         public string ServerAddress { get; set; }
+
+        /// <summary>
+        /// port to use for communication with the server
+        /// </summary>
         public int Port { get; set; }
+
+        // Next few objects are not stored in the Json config
         [JsonIgnore]
         public IPAddress ServerIP
         {

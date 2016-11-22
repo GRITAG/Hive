@@ -4,6 +4,9 @@ namespace HiveSuite.Core
 {
     public class Logger
     {
+        /// <summary>
+        /// Static log object, this keeps all logging though the same object instance
+        /// </summary>
         private static NLog.Logger Loging = LogManager.GetLogger("Hive");
 
         public Logger()
@@ -11,6 +14,11 @@ namespace HiveSuite.Core
 
         }
 
+        /// <summary>
+        /// Create and store a log entry
+        /// </summary>
+        /// <param name="level">the log level to use</param>
+        /// <param name="message">string message to store in the log</param>
         public void Log(LogLevel level, string message)
         {
             NLog.LogLevel logLevel = NLog.LogLevel.Off;
@@ -41,6 +49,9 @@ namespace HiveSuite.Core
         }
     }
 
+    /// <summary>
+    /// Levels of logging
+    /// </summary>
     public enum LogLevel
     {
         Trace, Debug, Info, Warn, Error, Fatal

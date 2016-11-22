@@ -23,6 +23,9 @@ namespace HiveSuite.Drone
         /// </summary>
         protected Task CurrentTask { get; private set; }
 
+        /// <summary>
+        /// loop for the objet type
+        /// </summary>
         public override void MainLoop()
         {
             while (States.CurrentState !=State.ShuttingDown)
@@ -142,6 +145,10 @@ namespace HiveSuite.Drone
             }
         }
 
+        /// <summary>
+        /// Set up all external communication
+        /// </summary>
+        /// <returns></returns>
         protected override bool InitilizeComms()
         {
             ComObject = new Network(((DroneSettings)Settings).ServerIP, ((DroneSettings)Settings).Port, Loging);
@@ -149,6 +156,10 @@ namespace HiveSuite.Drone
             return ComObject.CommsUp();
         }
 
+        /// <summary>
+        /// Load the settings file for the object type
+        /// </summary>
+        /// <returns></returns>
         protected override bool LoadSettings()
         {
             Settings = new DroneSettings(Loging);
@@ -169,6 +180,10 @@ namespace HiveSuite.Drone
             return true;
         }
 
+        /// <summary>
+        /// Startes and resolves the handshaking with the server
+        /// </summary>
+        /// <returns></returns>
         private bool ConnectToTaskMaster()
         {
             ComObject.SendMessage(new NetworkMessage

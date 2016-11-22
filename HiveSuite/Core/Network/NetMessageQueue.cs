@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace HiveSuite.Core.Network
 {
+    /// <summary>
+    /// Storage object for network messages built as a First in First out Queue
+    /// </summary>
     public class NetMessageQueue
     {
         /// <summary>
@@ -14,13 +14,21 @@ namespace HiveSuite.Core.Network
         /// </summary>
         private static ReaderWriterLockSlim QueueLock { get; set; }
 
+        /// <summary>
+        /// Collection of network messages taken in from the external network
+        /// </summary>
         private LinkedList<NetworkMessage> Messages { get; set; }
+
 
         public NetMessageQueue()
         {
             Messages = new LinkedList<NetworkMessage>();
         }
 
+        /// <summary>
+        /// Take the first message on the stack (bottem first)
+        /// </summary>
+        /// <returns></returns>
         public NetworkMessage Dequeue()
         {
             QueueLock.EnterWriteLock();
@@ -30,6 +38,10 @@ namespace HiveSuite.Core.Network
             return result;
         }
 
+        /// <summary>
+        /// Add a new message to the bottem of the queue
+        /// </summary>
+        /// <param name="msg"></param>
         public void Enqueue(NetworkMessage msg)
         {
             QueueLock.EnterWriteLock();
@@ -37,6 +49,10 @@ namespace HiveSuite.Core.Network
             QueueLock.ExitWriteLock();
         }
 
+        /// <summary>
+        /// Peak at the first message in the queue (will not dequeue)
+        /// </summary>
+        /// <returns></returns>
         public NetworkMessage Peek()
         {
             QueueLock.EnterReadLock();
@@ -45,6 +61,10 @@ namespace HiveSuite.Core.Network
             return result;
         }
 
+        /// <summary>
+        /// pull all messages of the queue and return them
+        /// </summary>
+        /// <returns>complete list of network messages</returns>
         public List<NetworkMessage> Dump()
         {
             QueueLock.EnterWriteLock();
@@ -54,6 +74,11 @@ namespace HiveSuite.Core.Network
             return result;
         }
 
+        /// <summary>
+        /// Pull a message from the queue if it matches the message text given(dequeues message pulled)
+        /// </summary>
+        /// <param name="messageText">message text to serach for</param>
+        /// <returns></returns>
         public NetworkMessage Pull(string messageText)
         {
             NetworkMessage result = null;
@@ -74,6 +99,10 @@ namespace HiveSuite.Core.Network
             return result;
         }
 
+        /// <summary>
+        /// remove a message from the queue using an object
+        /// </summary>
+        /// <param name="toRemove">object to remove</param>
         public void Remove(NetworkMessage toRemove)
         {
             QueueLock.EnterWriteLock();
@@ -81,6 +110,10 @@ namespace HiveSuite.Core.Network
             QueueLock.ExitWriteLock();
         }
 
+        /// <summary>
+        /// remove a message from the queue using an index
+        /// </summary>
+        /// <param name="index">index of the object to remove</param>
         public void Remove(int index)
         {
             QueueLock.EnterWriteLock();

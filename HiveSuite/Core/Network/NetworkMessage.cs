@@ -12,11 +12,23 @@ namespace HiveSuite.Core.Network
     /// </summary>
     public class NetworkMessage
     {
+        /// <summary>
+        /// message text 
+        /// </summary>
         public string Message { get; set; }
+
+        /// <summary>
+        /// data needed for message (must be json serlizable)
+        /// </summary>
         public object Data { get; set; }
 
         public NetworkMessage() { }
 
+        /// <summary>
+        /// Creates a mnetwork message object
+        /// </summary>
+        /// <param name="msg">message text</param>
+        /// <param name="data">any data need to be sent (must be json serlizable)</param>
         public NetworkMessage(string msg, object data)
         {
             Message = msg;

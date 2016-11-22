@@ -1,12 +1,7 @@
 ﻿using Lidgren.Network;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace HiveSuite.Core.Network
 {
@@ -16,14 +11,29 @@ namespace HiveSuite.Core.Network
     /// </summary>
     public class Network : NetworkBase
     {
+        /// <summary>
+        /// lidgern network object
+        /// </summary>
         NetPeer NetworkConnctor;
 
+        /// <summary>
+        /// Listen thread object
+        /// </summary>
         Listen ListenClass { get; set; }
 
+        /// <summary>
+        /// Listen thread
+        /// </summary>
         Thread ListenThread { get; set; }
 
+        /// <summary>
+        /// Server address
+        /// </summary>
         IPAddress Server { get; set; }
 
+        /// <summary>
+        /// server port
+        /// </summary>
         int Port { get; set; }
 
         /// <summary>
@@ -48,6 +58,9 @@ namespace HiveSuite.Core.Network
             }
         }
 
+        /// <summary>
+        /// Logging object, typiclay passed in
+        /// </summary>
         Logger Logging { get; set; }
 
         /// <summary>
@@ -84,6 +97,12 @@ namespace HiveSuite.Core.Network
 
         }
 
+        /// <summary>
+        /// creates a network object and automatilly connect to the server given
+        /// </summary>
+        /// <param name="server">ip address of the server</param>
+        /// <param name="port">port to use with server communication</param>
+        /// <param name="log">logging object to refrence</param>
         public Network(IPAddress server, int port, Logger log) : this(port, log)
         {
             Server = server;
@@ -110,6 +129,11 @@ namespace HiveSuite.Core.Network
             return Messages.Dump();
         }
 
+        /// <summary>
+        /// Pull a message from the queue if it is there
+        /// </summary>
+        /// <param name="msgText">text of message to pull</param>
+        /// <returns></returns>
         public NetworkMessage PullMessage(string msgText)
         {
             return Messages.Pull(msgText);
@@ -157,6 +181,10 @@ namespace HiveSuite.Core.Network
             return NetworkConnctor.Configuration.LocalAddress;
         }
 
+        /// <summary>
+        /// returns a bool True if the comms is up and false if the comms are down
+        /// </summary>
+        /// <returns></returns>
         public bool CommsUp()
         {
             if(!ListenClass.CloseConnection && ListenThread.IsAlive)
@@ -167,16 +195,29 @@ namespace HiveSuite.Core.Network
             return false;
         }
 
+        /// <summary>
+        /// Shutdown the network object and all related objects
+        /// </summary>
         public void ShutdownNetworking()
         {
             ListenClass.CloseConnection = true;
         }
 
+        /// <summary>
+        /// Send a message blindly to any peer given
+        /// </summary>
+        /// <param name="msg">message to send</param>
+        /// <param name="address">ip address of peer</param>
+        /// <param name="port">port to use</param>
         public void SendMessage(NetworkMessage msg, IPAddress address, int port)
         {
             NetworkConnctor.SendMessage(NetworkConnctor.CreateMessage(msg.ToString()), NetworkConnctor.GetConnection(new IPEndPoint(address, port)), NetDeliveryMethod.ReliableOrdered);
         }
 
+        /// <summary>
+        /// Send a message directly to the connected server
+        /// </summary>
+        /// <param name="msg">message to send</param>
         public void SendMessage(NetworkMessage msg)
         {
             NetworkConnctor.SendMessage(NetworkConnctor.CreateMessage(msg.ToString()), NetworkConnctor.GetConnection(new IPEndPoint(Server, Port)), NetDeliveryMethod.ReliableOrdered);

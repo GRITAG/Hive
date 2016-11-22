@@ -5,6 +5,9 @@ using System.Threading;
 
 namespace HiveSuite.Core.Network
 {
+    /// <summary>
+    /// The Listen Thread object used for incomming communications
+    /// </summary>
     public class Listen : NetworkBase
     {
         NetPeer PeerRef;
@@ -21,6 +24,9 @@ namespace HiveSuite.Core.Network
             Logging = log;
         }
 
+        /// <summary>
+        /// The actual thread loop for communications
+        /// </summary>
         public void Loop()
         {
             while (!CloseConnection)
