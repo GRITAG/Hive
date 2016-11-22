@@ -16,13 +16,13 @@ namespace HiveSuite.Test
             Net1 = new Network(1, null);
         }
 
-        [Test(Author ="Aaron V")]
+        //[Test(Author ="Aaron V")]
         public void ThreadIsSpinning()
         {
             Assert.IsTrue(Net1.CommsUp());
         }
 
-        [Test(Author = "Aaron V")]
+        //[Test(Author = "Aaron V")]
         public void Play()
         {
             Net1.LocalIP();

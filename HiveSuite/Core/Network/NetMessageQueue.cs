@@ -9,6 +9,20 @@ namespace HiveSuite.Core.Network
     /// </summary>
     public class NetMessageQueue
     {
+        public int Count
+        {
+            get
+            {
+                int returnCount = 0;
+
+                QueueLock.EnterReadLock();
+                returnCount = Messages.Count;
+                QueueLock.ExitReadLock();
+
+                return returnCount;
+            }
+        }
+
         /// <summary>
         /// thread locking for both Listen and Network
         /// </summary>
@@ -23,6 +37,7 @@ namespace HiveSuite.Core.Network
         public NetMessageQueue()
         {
             Messages = new LinkedList<NetworkMessage>();
+            QueueLock = new ReaderWriterLockSlim();
         }
 
         /// <summary>
@@ -120,5 +135,7 @@ namespace HiveSuite.Core.Network
             Messages.Remove(Messages.ElementAt(index));
             QueueLock.ExitWriteLock();
         }
+
+        
     }
 }
