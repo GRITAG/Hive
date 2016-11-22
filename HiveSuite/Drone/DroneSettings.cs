@@ -31,7 +31,7 @@ namespace HiveSuite.Drone
                 return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Hive\\Drone\\settings.json";
             }
         }
-
+        [JsonIgnore]
         private Core.Logger Logging { get; set; }
 
         /// <summary>

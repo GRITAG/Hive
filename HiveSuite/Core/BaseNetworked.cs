@@ -17,6 +17,9 @@ namespace HiveSuite.Core
         /// </summary>
         protected Network.Network ComObject { get; set; }
         
+        /// <summary>
+        /// Setting componet used to load, save, and read settings
+        /// </summary>
         protected ISettings Settings { get; set; }
 
         public Logger Loging = new Logger();

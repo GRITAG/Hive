@@ -1,11 +1,6 @@
-﻿using HiveSuite.Core;
-using HiveSuite.Core.Network;
+﻿using HiveSuite.Core.Network;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HiveSuite.Test
 {
@@ -13,7 +8,7 @@ namespace HiveSuite.Test
     public class NetworkTests
     {
         Network Net1;
-        Network Net2;
+        //Network Net2;
 
         [SetUp]
         public void Init()
