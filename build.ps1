@@ -1,0 +1,5 @@
+$msbuild = "C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe"
+$a = "HiveSuite\HiveSuite.sln /target:Clean /target:Build"
+$nugetrestore = "nuget restore .\HiveSuite\HiveSuite.sln"
+Invoke-Expression "$nugetrestore"
+Invoke-Expression "$msbuild $a"
