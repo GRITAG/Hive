@@ -34,11 +34,9 @@ namespace HiveSuite.Drone
 
     public enum Status
     {
-
         ReadyForWork,
         WaitingForWork,
         NotReadyForWork,
-
     }
 
     public enum State

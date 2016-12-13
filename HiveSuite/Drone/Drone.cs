@@ -75,14 +75,24 @@ namespace HiveSuite.Drone
                         break;
                     case State.Running:
                         States.UpdateStatus(Status.NotReadyForWork);
-
+                        if(TaskExe.Running)
+                        {
+                            if (TaskExe.RunTime > new TimeSpan(0, ((DroneSettings)Settings).ExecutionTimeout, 0))
+                            {
+                                States.UpdateState(State.StoppingTask);
+                            }
+                        }
+                        else
+                        {
+                            States.UpdateState(State.CleaningUP);
+                        }
                         break;
                     case State.StoppingTask:
-                        //TODO: Start Code to tear down any worker threads or at least acknowledge that the thread is done
+                        TaskExe.Stop();
                         States.UpdateStatus(Status.NotReadyForWork);
                         break;
                     case State.CleaningUP:
-                        //TODO: clean up any assets left over from the execution
+                        States.UpdateState(State.Ready);
                         States.UpdateStatus(Status.NotReadyForWork);
                         break;
                     case State.ResettingWorkspace:

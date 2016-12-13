@@ -16,6 +16,22 @@ namespace HiveSuite.Core.Task
         static Thread ExecutionThread { get; set; }
         static TaskData Task { get; set; }
         static PackageData Package { get; set; }
+        static DateTime StartTime { get; set; }
+
+        public bool Running
+        {
+            get
+            {
+                return ExecutionThread.IsAlive;
+            }
+        }
+        public TimeSpan RunTime
+        {
+            get
+            {
+                return DateTime.Now - StartTime;
+            }
+        }
 
         public TaskExecution(TaskData task, PackageData package, Logger logger, ISettings settings)
         {
