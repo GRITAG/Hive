@@ -133,7 +133,6 @@ namespace HiveSuite.Drone
                                 if (incoming != null)
                                 {
                                     States.UpdateStatus(Status.NotReadyForWork);
-
                                 }
                                 break;
                         }
