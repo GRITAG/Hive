@@ -26,6 +26,12 @@ namespace HiveSuite.Drone
         
         protected PackageCache Cache { get; set; }
 
+        public Drone() : base()
+        {
+            States = new DroneState();
+            this.Loging = new Logger();
+        }
+
         /// <summary>
         /// loop for the objet type
         /// </summary>

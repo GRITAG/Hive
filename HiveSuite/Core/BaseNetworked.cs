@@ -20,7 +20,7 @@ namespace HiveSuite.Core
         /// <summary>
         /// Setting componet used to load, save, and read settings
         /// </summary>
-        protected ISettings Settings { get; set; }
+        public ISettings Settings { get; set; }
 
         /// <summary>
         /// Main Logging object

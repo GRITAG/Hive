@@ -29,7 +29,9 @@ namespace HiveSuite
                     break;
                 case "configdrone":
                     Application = new Drone.Drone();
+                    Application.Settings = new Drone.DroneSettings(Application.Loging);
                     Application.GenerateConfig();
+                    Environment.Exit(0);
                     break;
             }
 

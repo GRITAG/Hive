@@ -59,6 +59,7 @@ namespace HiveSuite.Drone
         {
             ServerAddress = string.Empty;
             Port = 0;
+            Logging = logger;
         }
 
         /// <summary>
