@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using HiveSuite.Core;
 using HiveSuite.Core.Network;
 using System.Net;
+using HiveSuite.Core.PackageObjects;
 
 namespace HiveSuite.Drone
 {
@@ -25,6 +26,7 @@ namespace HiveSuite.Drone
 
         protected TaskData CurrentTaskData { get; set; }
         
+        protected PackageCache Cache { get; set; }
 
         /// <summary>
         /// loop for the objet type
@@ -106,6 +108,20 @@ namespace HiveSuite.Drone
                             States.UpdateStatus(Status.NotReadyForWork);
                             States.UpdateState(State.StartingTask);
                             CurrentTaskData = (TaskData)incoming.Data;
+                            if(!Cache.ContainsPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash))
+                            {
+                                ComObject.SendMessage(NetworkMessages.RequestPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash));
+                                NetworkMessage incomingPackage = null;
+                                
+                                incomingPackage = ComObject.PullMessage("Pacakge Response");
+
+                                if (incomingPackage != null)
+                                {
+                                    Cache.AddPackages((PackageTransmit)incomingPackage.Data);
+                                }
+                            }
+
+                            States.UpdateState(State.StartingTask);
                         }
                         break;
                     default:
@@ -158,7 +174,7 @@ namespace HiveSuite.Drone
         /// <returns></returns>
         protected override bool InitilizeComms()
         {
-            ComObject = new Network(((DroneSettings)Settings).ServerIP, ((DroneSettings)Settings).Port, Loging);
+            ComObject = new Network(((DroneSettings)Settings).ServerIP, ((DroneSettings)Settings).Port, Loging, Settings);
 
             return ComObject.CommsUp();
         }
@@ -184,6 +200,9 @@ namespace HiveSuite.Drone
                     return false;
                 }
             }
+
+            Cache = new PackageCache(Settings);
+
             return true;
         }
 

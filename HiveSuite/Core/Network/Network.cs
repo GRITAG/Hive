@@ -1,4 +1,5 @@
 ﻿using Lidgren.Network;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
@@ -36,6 +37,8 @@ namespace HiveSuite.Core.Network
         /// </summary>
         int Port { get; set; }
 
+        ISettings Settings { get; set; }
+
         /// <summary>
         /// Returns connected peers
         /// </summary>
@@ -68,8 +71,10 @@ namespace HiveSuite.Core.Network
         /// </summary>
         /// <param name="port">the port to communicate on</param>
         /// <param name="log">Logging to use</param>
-        public Network(int port, Logger log)
+        public Network(int port, Logger log, ISettings settings)
         {
+            Settings = settings;
+
             Port = port;
 
             Logging = log;
@@ -103,7 +108,7 @@ namespace HiveSuite.Core.Network
         /// <param name="server">ip address of the server</param>
         /// <param name="port">port to use with server communication</param>
         /// <param name="log">logging object to refrence</param>
-        public Network(IPAddress server, int port, Logger log) : this(port, log)
+        public Network(IPAddress server, int port, Logger log, ISettings settings) : this(port, log, settings)
         {
             Server = server;
             Port = port;
@@ -136,7 +141,19 @@ namespace HiveSuite.Core.Network
         /// <returns></returns>
         public NetworkMessage PullMessage(string msgText)
         {
-            return Messages.Pull(msgText);
+            DateTime pullStart = DateTime.Now;
+            NetworkMessage pullMessage = null;
+            while(pullMessage  == null && pullStart < (pullStart + new TimeSpan(0,0,Settings.NetworkTimeout)))
+            {
+                pullMessage = Messages.Pull(msgText);
+            }
+
+            if(pullMessage == null)
+            {
+                throw new Exception("Pull for message timed out");
+            }
+
+            return pullMessage;
         }
 
         /// <summary>

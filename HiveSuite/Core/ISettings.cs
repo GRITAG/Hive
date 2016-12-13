@@ -33,5 +33,7 @@ namespace HiveSuite.Core
         /// <param name="filePath"></param>
         void Save(string filePath);
 
+        int NetworkTimeout { get; set; }
+
     }
 }

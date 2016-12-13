@@ -23,6 +23,8 @@ namespace HiveSuite.Drone
         /// </summary>
         public int Port { get; set; }
 
+        public int NetworkTimeout { get; set; }
+
         // Next few objects are not stored in the Json config
         [JsonIgnore]
         public IPAddress ServerIP

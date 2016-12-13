@@ -9,8 +9,8 @@ namespace HiveSuite.Core
     public class TaskData
     {
         Guid TaskID { get; set; }
-        Guid PackageID { get; set; }
-        byte[] PackageHash { get; set; }
+        public Guid PackageID { get; set; }
+        public byte[] PackageHash { get; set; }
         string TaskFile { get; set; }
     }
 }
