@@ -52,6 +52,6 @@ namespace HiveSuite.Drone
         Restarting,
         ShuttingDown,
         ErrorFault,
-        WaitingForServer
+        WaitingForWork
     }
 }

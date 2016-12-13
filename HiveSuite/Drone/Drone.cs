@@ -23,6 +23,9 @@ namespace HiveSuite.Drone
         /// </summary>
         protected Task CurrentTask { get; private set; }
 
+        protected TaskData CurrentTaskData { get; set; }
+        
+
         /// <summary>
         /// loop for the objet type
         /// </summary>
@@ -94,7 +97,16 @@ namespace HiveSuite.Drone
                         break;
                     case State.Ready:
                         States.UpdateStatus(Status.ReadyForWork);
-                        
+                        ComObject.SendMessage(NetworkMessages.RequestTask);
+                        break;
+                    case State.WaitingForWork:
+                        NetworkMessage incoming = ComObject.PullMessage("Incoming Package");
+                        if (incoming != null)
+                        {
+                            States.UpdateStatus(Status.NotReadyForWork);
+                            States.UpdateState(State.StartingTask);
+                            CurrentTaskData = (TaskData)incoming.Data;
+                        }
                         break;
                     default:
                         break;
@@ -102,43 +114,39 @@ namespace HiveSuite.Drone
                 #endregion
 
                 #region StatusManagment
-                switch (States.CurrentStatus)
-                {
-                    case Status.ReadyForWork:
-                        ComObject.SendMessage(NetworkMessages.RequestTask);
-                        States.UpdateStatus(Status.WaitingForWork);
-                        break;
-                    case Status.WaitingForWork:
+                //switch (States.CurrentStatus)
+                //{
+                //    case Status.ReadyForWork:
+                        
+                //        States.UpdateStatus(Status.WaitingForWork);
+                //        break;
+                //    case Status.WaitingForWork:
 
-                        break;
-                    case Status.NotReadyForWork:
+                //        break;
+                //    case Status.NotReadyForWork:
 
-                        break;
-                    default:
-                        break;
-                }
+                //        break;
+                //    default:
+                //        break;
+                //}
                 #endregion
 
                 #region NetMessageManagment
                 // get all network messages
                 // check for state needed messages first
                 // react to other messages
-                switch(States.CurrentState)
-                {
-                    case State.Ready:
-                        switch(States.CurrentStatus)
-                        {
-                            case Status.ReadyForWork:
-                                NetworkMessage incoming = ComObject.PullMessage("Incoming Package");
-                                if (incoming != null)
-                                {
-                                    States.UpdateStatus(Status.NotReadyForWork);
-                                }
-                                break;
-                        }
-                        break;
-                }
-                ComObject.PullMessage("");
+                //switch(States.CurrentState)
+                //{
+                //    case State.Ready:
+                //        switch(States.CurrentStatus)
+                //        {
+                //            case Status.ReadyForWork:
+                                
+                //                break;
+                //        }
+                //        break;
+                //}
+                //ComObject.PullMessage("");
                 #endregion
 
             }

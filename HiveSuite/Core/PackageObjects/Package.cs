@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HiveSuite.Core
 {
-    class TaskPackage
+    public class Package : PackageData
     {
     }
 }

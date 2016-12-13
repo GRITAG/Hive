@@ -51,6 +51,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -69,8 +71,12 @@
     <Compile Include="Core\Network\NetworkBase.cs" />
     <Compile Include="Core\Network\NetworkMessage.cs" />
     <Compile Include="Core\Network\NetworkMessages.cs" />
+    <Compile Include="Core\PackageObjects\PackageCache.cs" />
+    <Compile Include="Core\PackageObjects\PackageData.cs" />
+    <Compile Include="Core\PackageObjects\PackageTransmit.cs" />
     <Compile Include="Core\StaticState.cs" />
-    <Compile Include="Core\TaskPackage.cs" />
+    <Compile Include="Core\PackageObjects\Package.cs" />
+    <Compile Include="Core\TaskData.cs" />
     <Compile Include="Drone\DroneSettings.cs" />
     <Compile Include="Drone\Drone.cs" />
     <Compile Include="Drone\DroneState.cs" />
