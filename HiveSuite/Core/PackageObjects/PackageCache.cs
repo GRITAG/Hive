@@ -70,6 +70,22 @@ namespace HiveSuite.Core
             return ContainsPackage(package.ID, package.MD5Hash);
         }
 
+        public PackageData GetPackage(Guid id, byte[] md5Hash)
+        {
+            foreach (PackageData currentPack in Packages)
+            {
+                if (currentPack.ID == id)
+                {
+                    if (currentPack.MD5Hash.SequenceEqual(md5Hash))
+                    {
+                        return currentPack;
+                    }
+                }
+            }
+
+            throw new Exception("Could not find requested pacakge");
+        }
+
         public void RemovePackage(Guid id, byte[] md5Hash)
         {
             for (int packageIndex=0; packageIndex < Packages.Count; packageIndex++) //PackageData currentPack in Packages)

@@ -4,6 +4,7 @@ using HiveSuite.Core;
 using HiveSuite.Core.Network;
 using System.Net;
 using HiveSuite.Core.PackageObjects;
+using HiveSuite.Core.Task;
 
 namespace HiveSuite.Drone
 {
@@ -19,10 +20,7 @@ namespace HiveSuite.Drone
         /// </summary>
         protected DroneState States { get; set; }
 
-        /// <summary>
-        /// The current task for the drone
-        /// </summary>
-        protected Task CurrentTask { get; private set; }
+        protected TaskExecution TaskExe { get; set; }
 
         protected TaskData CurrentTaskData { get; set; }
         
@@ -72,7 +70,12 @@ namespace HiveSuite.Drone
                         break;
                     case State.StartingTask:
                         States.UpdateStatus(Status.NotReadyForWork);
-                        //TODO: start processing the tasks or at least doing the set up
+                        TaskExe = new TaskExecution(CurrentTaskData, Cache.GetPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash), Loging, Settings);
+                        States.UpdateState(State.Running);
+                        break;
+                    case State.Running:
+                        States.UpdateStatus(Status.NotReadyForWork);
+
                         break;
                     case State.StoppingTask:
                         //TODO: Start Code to tear down any worker threads or at least acknowledge that the thread is done

@@ -76,7 +76,8 @@
     <Compile Include="Core\PackageObjects\PackageTransmit.cs" />
     <Compile Include="Core\StaticState.cs" />
     <Compile Include="Core\PackageObjects\Package.cs" />
-    <Compile Include="Core\TaskData.cs" />
+    <Compile Include="Core\Task\TaskData.cs" />
+    <Compile Include="Core\Task\TaskExecution.cs" />
     <Compile Include="Drone\DroneSettings.cs" />
     <Compile Include="Drone\Drone.cs" />
     <Compile Include="Drone\DroneState.cs" />

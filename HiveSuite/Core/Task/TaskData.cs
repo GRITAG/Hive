@@ -11,6 +11,6 @@ namespace HiveSuite.Core
         Guid TaskID { get; set; }
         public Guid PackageID { get; set; }
         public byte[] PackageHash { get; set; }
-        string TaskFile { get; set; }
+        public string TaskFile { get; set; }
     }
 }
