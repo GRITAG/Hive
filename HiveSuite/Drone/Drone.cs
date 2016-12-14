@@ -15,6 +15,8 @@ namespace HiveSuite.Drone
     /// </summary>
     public class Drone : BaseNetworked
     {
+        NetworkClient ComObject { get; set; }
+
         /// <summary>
         /// Drone state object
         /// </summary>
@@ -193,7 +195,8 @@ namespace HiveSuite.Drone
         /// <returns></returns>
         protected override bool InitilizeComms()
         {
-            ComObject = new Network(((DroneSettings)Settings).ServerIP, ((DroneSettings)Settings).Port, Loging, Settings);
+            ComObject = new NetworkClient(Settings);
+            ComObject.SendDiscovery();
 
             return ComObject.CommsUp();
         }
@@ -234,7 +237,7 @@ namespace HiveSuite.Drone
             ComObject.SendMessage(new NetworkMessage
             {
                 Message = "Ready"
-            }, ((DroneSettings)Settings).ServerIP, ((DroneSettings)Settings).Port);
+            });
 
             NetworkMessage ackMsg;
             DateTime StartTime = DateTime.Now;

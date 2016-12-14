@@ -83,6 +83,7 @@ namespace HiveSuite.Drone
                 ServerAddress = settings.ServerAddress;
                 Port = settings.Port;
                 ServerAddress = settings.ServerAddress;
+                NetworkTimeout = settings.NetworkTimeout;
             }
             else
             {

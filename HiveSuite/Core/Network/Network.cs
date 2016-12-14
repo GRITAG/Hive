@@ -228,7 +228,7 @@ namespace HiveSuite.Core.Network
         /// <param name="port">port to use</param>
         public void SendMessage(NetworkMessage msg, IPAddress address, int port)
         {
-            NetworkConnctor.SendMessage(NetworkConnctor.CreateMessage(msg.ToString()), NetworkConnctor.GetConnection(new IPEndPoint(address, port)), NetDeliveryMethod.ReliableOrdered);
+            NetworkConnctor.SendMessage(NetworkConnctor.CreateMessage(msg.ToString()),  NetworkConnctor.GetConnection(new IPEndPoint(address, port)), NetDeliveryMethod.ReliableOrdered);
         }
 
         /// <summary>
@@ -237,7 +237,16 @@ namespace HiveSuite.Core.Network
         /// <param name="msg">message to send</param>
         public void SendMessage(NetworkMessage msg)
         {
-            NetworkConnctor.SendMessage(NetworkConnctor.CreateMessage(msg.ToString()), NetworkConnctor.GetConnection(new IPEndPoint(Server, Port)), NetDeliveryMethod.ReliableOrdered);
+            NetConnection endPoint = NetworkConnctor.GetConnection(new IPEndPoint(Server, Port));
+
+            if (endPoint != null)
+            {
+                NetworkConnctor.SendMessage(NetworkConnctor.CreateMessage(msg.ToString()), endPoint, NetDeliveryMethod.ReliableOrdered);
+            }
+            else
+            {
+                throw new Exception("No end point to communicate with");
+            }
         }
     }
 

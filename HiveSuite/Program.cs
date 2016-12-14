@@ -36,6 +36,7 @@ namespace HiveSuite
             }
 
             Application.MainLoop();
+            Environment.Exit(0);
         }
     }
 }
