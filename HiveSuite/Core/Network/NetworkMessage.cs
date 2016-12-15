@@ -22,6 +22,10 @@ namespace HiveSuite.Core.Network
         /// </summary>
         public object Data { get; set; }
 
+        public string SenderIP { get; set; }
+
+        public int SenderPort { get; set; }
+
         public NetworkMessage() { }
 
         /// <summary>

@@ -119,7 +119,7 @@ namespace HiveSuite.Core.Network
                 Thread.Sleep(500);
             }
 
-            if(NetworkObj.ConnectionsCount < 1)
+            if(NetworkObj.ConnectionsCount < 1)//
             {
                 throw new Exception("Could not find server to connect to");
             }

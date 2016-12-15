@@ -13,7 +13,6 @@ namespace HiveSuite.Core.Network
     {
         NetPeerConfiguration Config { get; set; }
         static NetServer NetworkObj { get; set; }
-        ISettings Settings { get; set; }
         Thread ListenThread { get; set; }
 
         /// <summary>
@@ -74,13 +73,16 @@ namespace HiveSuite.Core.Network
                             inMsg.SenderConnection.Approve();
                             break;
                         case NetIncomingMessageType.Data:
-                            Messages.Enqueue(new NetworkMessage(inMsg.ReadString()));
+                            NetworkMessage tempMsg = new NetworkMessage(inMsg.ReadString());
+                            tempMsg.SenderIP = inMsg.SenderEndPoint.Address.ToString();
+                            tempMsg.SenderPort = inMsg.SenderEndPoint.Port;
+                            Messages.Enqueue(tempMsg);
                             break;
                         case NetIncomingMessageType.Receipt:
                             break;
                         case NetIncomingMessageType.DiscoveryRequest:
-                            NetOutgoingMessage tempMsg = NetworkObj.CreateMessage();
-                            NetworkObj.SendDiscoveryResponse(tempMsg, inMsg.SenderEndPoint);
+                            NetOutgoingMessage tempMsg2 = NetworkObj.CreateMessage();
+                            NetworkObj.SendDiscoveryResponse(tempMsg2, inMsg.SenderEndPoint);
                             break;
                         case NetIncomingMessageType.DiscoveryResponse:
                             break;
@@ -109,9 +111,9 @@ namespace HiveSuite.Core.Network
         /// Send a message directly to the connected server
         /// </summary>
         /// <param name="msg">message to send</param>
-        public void SendMessage(NetworkMessage msg, IPAddress endPointAddress)
+        public void SendMessage(NetworkMessage msg, IPAddress endPointAddress, int port)
         {
-            NetConnection endPoint = NetworkObj.GetConnection(new IPEndPoint(endPointAddress, Config.Port));
+            NetConnection endPoint = NetworkObj.GetConnection(new IPEndPoint(endPointAddress, port));
 
             if (endPoint != null)
             {

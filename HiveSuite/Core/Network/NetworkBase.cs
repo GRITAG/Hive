@@ -53,14 +53,14 @@ namespace HiveSuite.Core.Network
         {
             DateTime pullStart = DateTime.Now;
             NetworkMessage pullMessage = null;
-            while (pullMessage == null && (DateTime.Now - pullStart) > new TimeSpan(0, 0, Settings.NetworkTimeout))
+            while (pullMessage == null && (DateTime.Now - pullStart) < new TimeSpan(0, 0, Settings.NetworkTimeout))
             {
                 pullMessage = Messages.Pull(msgText);
             }
 
             if (pullMessage == null)
             {
-                throw new Exception("Pull for message timed out");
+                //throw new Exception("Pull for message timed out");
             }
 
             return pullMessage;
