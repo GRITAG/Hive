@@ -20,7 +20,11 @@ x86/
 bld/
 [Bb]in/
 [Oo]bj/
+<<<<<<< HEAD
 [Dd]oc/
+=======
+[Dd]ocs/
+>>>>>>> 2b6836fe65d4220721f156bab07fd5710c198ae6
 
 # Visual Studio 2015 cache/options directory
 .vs/

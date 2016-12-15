@@ -23,6 +23,10 @@ namespace HiveSuite.Drone
         /// </summary>
         public int Port { get; set; }
 
+        public int NetworkTimeout { get; set; }
+
+        public int ExecutionTimeout { get; set; }
+
         // Next few objects are not stored in the Json config
         [JsonIgnore]
         public IPAddress ServerIP
@@ -55,6 +59,7 @@ namespace HiveSuite.Drone
         {
             ServerAddress = string.Empty;
             Port = 0;
+            Logging = logger;
         }
 
         /// <summary>
@@ -78,6 +83,7 @@ namespace HiveSuite.Drone
                 ServerAddress = settings.ServerAddress;
                 Port = settings.Port;
                 ServerAddress = settings.ServerAddress;
+                NetworkTimeout = settings.NetworkTimeout;
             }
             else
             {

@@ -13,7 +13,7 @@ namespace HiveSuite.Test
         [SetUp]
         public void Init()
         {
-            Net1 = new Network(1, null);
+            //Net1 = new Network(1, null);
         }
 
         //[Test(Author ="Aaron V")]

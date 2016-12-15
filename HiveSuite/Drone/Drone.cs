@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using HiveSuite.Core;
 using HiveSuite.Core.Network;
 using System.Net;
+using HiveSuite.Core.PackageObjects;
+using HiveSuite.Core.Task;
 
 namespace HiveSuite.Drone
 {
@@ -13,15 +15,24 @@ namespace HiveSuite.Drone
     /// </summary>
     public class Drone : BaseNetworked
     {
+        NetworkClient ComObject { get; set; }
+
         /// <summary>
         /// Drone state object
         /// </summary>
         protected DroneState States { get; set; }
 
-        /// <summary>
-        /// The current task for the drone
-        /// </summary>
-        protected Task CurrentTask { get; private set; }
+        protected TaskExecution TaskExe { get; set; }
+
+        protected TaskData CurrentTaskData { get; set; }
+        
+        protected PackageCache Cache { get; set; }
+
+        public Drone() : base()
+        {
+            States = new DroneState();
+            this.Loging = new Logger();
+        }
 
         /// <summary>
         /// loop for the objet type
@@ -67,14 +78,29 @@ namespace HiveSuite.Drone
                         break;
                     case State.StartingTask:
                         States.UpdateStatus(Status.NotReadyForWork);
-                        //TODO: start processing the tasks or at least doing the set up
+                        TaskExe = new TaskExecution(CurrentTaskData, Cache.GetPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash), Loging, Settings);
+                        States.UpdateState(State.Running);
+                        break;
+                    case State.Running:
+                        States.UpdateStatus(Status.NotReadyForWork);
+                        if(TaskExe.Running)
+                        {
+                            if (TaskExe.RunTime > new TimeSpan(0, ((DroneSettings)Settings).ExecutionTimeout, 0))
+                            {
+                                States.UpdateState(State.StoppingTask);
+                            }
+                        }
+                        else
+                        {
+                            States.UpdateState(State.CleaningUP);
+                        }
                         break;
                     case State.StoppingTask:
-                        //TODO: Start Code to tear down any worker threads or at least acknowledge that the thread is done
+                        TaskExe.Stop();
                         States.UpdateStatus(Status.NotReadyForWork);
                         break;
                     case State.CleaningUP:
-                        //TODO: clean up any assets left over from the execution
+                        States.UpdateState(State.Ready);
                         States.UpdateStatus(Status.NotReadyForWork);
                         break;
                     case State.ResettingWorkspace:
@@ -94,7 +120,30 @@ namespace HiveSuite.Drone
                         break;
                     case State.Ready:
                         States.UpdateStatus(Status.ReadyForWork);
-                        
+                        ComObject.SendMessage(NetworkMessages.RequestTask);
+                        break;
+                    case State.WaitingForWork:
+                        NetworkMessage incoming = ComObject.PullMessage("Incoming Package");
+                        if (incoming != null)
+                        {
+                            States.UpdateStatus(Status.NotReadyForWork);
+                            States.UpdateState(State.StartingTask);
+                            CurrentTaskData = (TaskData)incoming.Data;
+                            if(!Cache.ContainsPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash))
+                            {
+                                ComObject.SendMessage(NetworkMessages.RequestPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash));
+                                NetworkMessage incomingPackage = null;
+                                
+                                incomingPackage = ComObject.PullMessage("Pacakge Response");
+
+                                if (incomingPackage != null)
+                                {
+                                    Cache.AddPackages((PackageTransmit)incomingPackage.Data);
+                                }
+                            }
+
+                            States.UpdateState(State.StartingTask);
+                        }
                         break;
                     default:
                         break;
@@ -102,44 +151,39 @@ namespace HiveSuite.Drone
                 #endregion
 
                 #region StatusManagment
-                switch (States.CurrentStatus)
-                {
-                    case Status.ReadyForWork:
-                        ComObject.SendMessage(NetworkMessages.RequestTask);
-                        States.UpdateStatus(Status.WaitingForWork);
-                        break;
-                    case Status.WaitingForWork:
+                //switch (States.CurrentStatus)
+                //{
+                //    case Status.ReadyForWork:
+                        
+                //        States.UpdateStatus(Status.WaitingForWork);
+                //        break;
+                //    case Status.WaitingForWork:
 
-                        break;
-                    case Status.NotReadyForWork:
+                //        break;
+                //    case Status.NotReadyForWork:
 
-                        break;
-                    default:
-                        break;
-                }
+                //        break;
+                //    default:
+                //        break;
+                //}
                 #endregion
 
                 #region NetMessageManagment
                 // get all network messages
                 // check for state needed messages first
                 // react to other messages
-                switch(States.CurrentState)
-                {
-                    case State.Ready:
-                        switch(States.CurrentStatus)
-                        {
-                            case Status.ReadyForWork:
-                                NetworkMessage incoming = ComObject.PullMessage("Incoming Package");
-                                if (incoming != null)
-                                {
-                                    States.UpdateStatus(Status.NotReadyForWork);
-
-                                }
-                                break;
-                        }
-                        break;
-                }
-                ComObject.PullMessage("");
+                //switch(States.CurrentState)
+                //{
+                //    case State.Ready:
+                //        switch(States.CurrentStatus)
+                //        {
+                //            case Status.ReadyForWork:
+                                
+                //                break;
+                //        }
+                //        break;
+                //}
+                //ComObject.PullMessage("");
                 #endregion
 
             }
@@ -151,7 +195,8 @@ namespace HiveSuite.Drone
         /// <returns></returns>
         protected override bool InitilizeComms()
         {
-            ComObject = new Network(((DroneSettings)Settings).ServerIP, ((DroneSettings)Settings).Port, Loging);
+            ComObject = new NetworkClient(Settings);
+            ComObject.SendDiscovery();
 
             return ComObject.CommsUp();
         }
@@ -177,6 +222,9 @@ namespace HiveSuite.Drone
                     return false;
                 }
             }
+
+            Cache = new PackageCache(Settings);
+
             return true;
         }
 
@@ -189,7 +237,7 @@ namespace HiveSuite.Drone
             ComObject.SendMessage(new NetworkMessage
             {
                 Message = "Ready"
-            }, ((DroneSettings)Settings).ServerIP, ((DroneSettings)Settings).Port);
+            });
 
             NetworkMessage ackMsg;
             DateTime StartTime = DateTime.Now;

@@ -12,15 +12,15 @@ namespace HiveSuite.Core
     /// </summary>
     public abstract class BaseNetworked
     {
-        /// <summary>
-        /// Main network object
-        /// </summary>
-        protected Network.Network ComObject { get; set; }
+        ///// <summary>
+        ///// Main network object
+        ///// </summary>
+        //protected Network.Network ComObject { get; set; }
         
         /// <summary>
         /// Setting componet used to load, save, and read settings
         /// </summary>
-        protected ISettings Settings { get; set; }
+        public ISettings Settings { get; set; }
 
         /// <summary>
         /// Main Logging object
