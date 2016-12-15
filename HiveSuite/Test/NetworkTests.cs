@@ -7,7 +7,7 @@ namespace HiveSuite.Test
     [TestFixture]
     public class NetworkTests : UnitTest
     {
-        Network Net1;
+        //Network Net1;
         //Network Net2;
 
         [SetUp]
@@ -19,13 +19,13 @@ namespace HiveSuite.Test
         //[Test(Author ="Aaron V")]
         public void ThreadIsSpinning()
         {
-            Assert.IsTrue(Net1.CommsUp());
+            //Assert.IsTrue(Net1.CommsUp());
         }
 
         //[Test(Author = "Aaron V")]
         public void Play()
         {
-            Net1.LocalIP();
+            //Net1.LocalIP();
             Console.WriteLine("Test");
         }
     }
