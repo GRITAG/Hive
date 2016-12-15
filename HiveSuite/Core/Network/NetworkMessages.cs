@@ -12,10 +12,14 @@ namespace HiveSuite.Core.Network
     /// </summary>
     public class NetworkMessages
     {
+        public static NetworkMessage Ready = new NetworkMessage { Message = "Ready" };
+
+        public static NetworkMessage AddToServer = new NetworkMessage { Message = "Added to Server" };
+
         /// <summary>
         /// requests a task from the server
         /// </summary>
-        public static NetworkMessage RequestTask = new NetworkMessage { Message ="Task Requested", Data = null } ;
+        public static NetworkMessage RequestTask = new NetworkMessage { Message ="Task Requested", Data = null };
 
         public static NetworkMessage ResponseTask(object data)
         {

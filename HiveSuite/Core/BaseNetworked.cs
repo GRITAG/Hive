@@ -22,6 +22,8 @@ namespace HiveSuite.Core
         /// </summary>
         public ISettings Settings { get; set; }
 
+        protected DateTime LastInteraction { get; set; }
+
         /// <summary>
         /// Main Logging object
         /// </summary>

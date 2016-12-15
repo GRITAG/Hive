@@ -5,6 +5,7 @@ using HiveSuite.Core.Network;
 using System.Net;
 using HiveSuite.Core.PackageObjects;
 using HiveSuite.Core.Task;
+using System.Threading;
 
 namespace HiveSuite.Drone
 {
@@ -39,6 +40,8 @@ namespace HiveSuite.Drone
         /// </summary>
         public override void MainLoop()
         {
+            NetworkMessage incoming = null;
+
             while (States.CurrentState !=State.ShuttingDown)
             {
                 #region StateManagment
@@ -122,8 +125,23 @@ namespace HiveSuite.Drone
                         States.UpdateStatus(Status.ReadyForWork);
                         ComObject.SendMessage(NetworkMessages.RequestTask);
                         break;
-                    case State.WaitingForWork:
-                        NetworkMessage incoming = ComObject.PullMessage("Incoming Package");
+                    case State.WaitingForTask:
+                        LastInteraction = DateTime.Now;
+                        while (incoming == null && (LastInteraction - DateTime.Now) < new TimeSpan(0, 2, 0))
+                        {
+                            incoming = ComObject.PullMessage(NetworkMessages.ResponseTask(null).Message);
+                            Thread.Sleep(500);
+                        }
+
+                        if(incoming == null)
+                        {
+                            Log("Task retirval timed out", LogLevel.Error);
+                            States.UpdateState(State.Ready);
+                        }
+
+                        break;
+                    case State.WaitingForPackage:
+                        incoming = ComObject.PullMessage("Incoming Package");
                         if (incoming != null)
                         {
                             States.UpdateStatus(Status.NotReadyForWork);
@@ -144,6 +162,7 @@ namespace HiveSuite.Drone
 
                             States.UpdateState(State.StartingTask);
                         }
+                        incoming = null;
                         break;
                     default:
                         break;
@@ -234,22 +253,19 @@ namespace HiveSuite.Drone
         /// <returns></returns>
         private bool ConnectToTaskMaster()
         {
-            ComObject.SendMessage(new NetworkMessage
-            {
-                Message = "Ready"
-            });
+            ComObject.SendMessage(NetworkMessages.Ready);
 
             NetworkMessage ackMsg;
             DateTime StartTime = DateTime.Now;
 
             do
             {
-                ackMsg = ComObject.PullMessage("Added to Server");
+                ackMsg = ComObject.PullMessage(NetworkMessages.AddToServer.Message);
 
             }
             while (ackMsg == null && (DateTime.Now - StartTime) < new TimeSpan(0, 0, 60));
 
-            if (ComObject.PeerCount < 0 && ackMsg != null)
+            if (ComObject.PeerCount > 0 && ackMsg != null)
             {
                 return true;
             }

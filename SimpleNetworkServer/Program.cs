@@ -27,10 +27,15 @@ namespace SimpleNetworkServer
 
             while(true)
             {
-                NetworkMessage readyMsg = ComObject.PullMessage("Ready");
+                NetworkMessage readyMsg = ComObject.PullMessage(NetworkMessages.Ready.Message);
                 if(readyMsg != null)
                 {
-                    ComObject.SendMessage(readyMsg, IPAddress.Parse(readyMsg.SenderIP), readyMsg.SenderPort);
+                    ComObject.SendMessage(NetworkMessages.AddToServer, IPAddress.Parse(readyMsg.SenderIP), readyMsg.SenderPort);
+                }
+                NetworkMessage requestTask = ComObject.PullMessage(NetworkMessages.RequestTask.Message);
+                if(requestTask != null)
+                {
+                    ComObject.SendMessage(NetworkMessages.ResponseTask(null), IPAddress.Parse(requestTask.SenderIP), requestTask.SenderPort);
                 }
                 Console.WriteLine(ComObject.PeerCount);
             }
