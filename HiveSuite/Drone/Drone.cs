@@ -79,6 +79,13 @@ namespace HiveSuite.Drone
                         }
 
                         break;
+                    case State.CheckForPackage:
+                        if(!Cache.ContainsPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash))
+                        {
+                            ComObject.SendMessage(NetworkMessages.RequestPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash));
+                            States.UpdateState(State.WaitingForPackage);
+                        }
+                        break;
                     case State.StartingTask:
                         States.UpdateStatus(Status.NotReadyForWork);
                         TaskExe = new TaskExecution(CurrentTaskData, Cache.GetPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash), Loging, Settings);
@@ -124,6 +131,7 @@ namespace HiveSuite.Drone
                     case State.Ready:
                         States.UpdateStatus(Status.ReadyForWork);
                         ComObject.SendMessage(NetworkMessages.RequestTask);
+                        States.UpdateState(State.WaitingForTask);
                         break;
                     case State.WaitingForTask:
                         LastInteraction = DateTime.Now;
@@ -138,31 +146,37 @@ namespace HiveSuite.Drone
                             Log("Task retirval timed out", LogLevel.Error);
                             States.UpdateState(State.Ready);
                         }
+                        else
+                        {
+                            CurrentTaskData = new TaskData(incoming.Data.ToString());
+                            incoming = null;
+                            States.UpdateState(State.CheckForPackage);
+                        }
 
                         break;
                     case State.WaitingForPackage:
-                        incoming = ComObject.PullMessage("Incoming Package");
-                        if (incoming != null)
-                        {
-                            States.UpdateStatus(Status.NotReadyForWork);
-                            States.UpdateState(State.StartingTask);
-                            CurrentTaskData = (TaskData)incoming.Data;
-                            if(!Cache.ContainsPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash))
-                            {
-                                ComObject.SendMessage(NetworkMessages.RequestPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash));
-                                NetworkMessage incomingPackage = null;
+                        //incoming = ComObject.PullMessage("Incoming Package");
+                        //if (incoming != null)
+                        //{
+                        //    States.UpdateStatus(Status.NotReadyForWork);
+                        //    States.UpdateState(State.StartingTask);
+                        //    CurrentTaskData = (TaskData)incoming.Data;
+                        //    if(!Cache.ContainsPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash))
+                        //    {
+                        //        ComObject.SendMessage(NetworkMessages.RequestPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash));
+                        //        NetworkMessage incomingPackage = null;
                                 
-                                incomingPackage = ComObject.PullMessage("Pacakge Response");
+                        //        incomingPackage = ComObject.PullMessage("Pacakge Response");
 
-                                if (incomingPackage != null)
-                                {
-                                    Cache.AddPackages((PackageTransmit)incomingPackage.Data);
-                                }
-                            }
+                        //        if (incomingPackage != null)
+                        //        {
+                        //            Cache.AddPackages((PackageTransmit)incomingPackage.Data);
+                        //        }
+                        //    }
 
-                            States.UpdateState(State.StartingTask);
-                        }
-                        incoming = null;
+                        //    States.UpdateState(State.StartingTask);
+                        //}
+                        //incoming = null;
                         break;
                     default:
                         break;

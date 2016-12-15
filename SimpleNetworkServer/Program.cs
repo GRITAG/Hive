@@ -30,14 +30,18 @@ namespace SimpleNetworkServer
                 NetworkMessage readyMsg = ComObject.PullMessage(NetworkMessages.Ready.Message);
                 if(readyMsg != null)
                 {
+                    Console.WriteLine("Connect Request");
                     ComObject.SendMessage(NetworkMessages.AddToServer, IPAddress.Parse(readyMsg.SenderIP), readyMsg.SenderPort);
+                    Console.WriteLine("Connecting Drone");
                 }
                 NetworkMessage requestTask = ComObject.PullMessage(NetworkMessages.RequestTask.Message);
                 if(requestTask != null)
                 {
-                    ComObject.SendMessage(NetworkMessages.ResponseTask(null), IPAddress.Parse(requestTask.SenderIP), requestTask.SenderPort);
+                    Console.WriteLine("Task Request");
+                    ComObject.SendMessage(NetworkMessages.ResponseTask(new TaskData()), IPAddress.Parse(requestTask.SenderIP), requestTask.SenderPort);
+                    Console.WriteLine("Task Reponse sent");
                 }
-                Console.WriteLine(ComObject.PeerCount);
+                //Console.WriteLine(ComObject.PeerCount);
             }
         }
     }

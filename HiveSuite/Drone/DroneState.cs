@@ -50,7 +50,9 @@ namespace HiveSuite.Drone
         Restarting,
         ShuttingDown,
         ErrorFault,
-        WaitingForWork,
+        CheckForPackage,
+        WaitingForPackage,
+        WaitingForTask,
         Running
     }
 }
