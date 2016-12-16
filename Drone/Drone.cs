@@ -155,28 +155,12 @@ namespace HiveSuite.Drone
 
                         break;
                     case State.WaitingForPackage:
-                        //incoming = ComObject.PullMessage("Incoming Package");
-                        //if (incoming != null)
-                        //{
-                        //    States.UpdateStatus(Status.NotReadyForWork);
-                        //    States.UpdateState(State.StartingTask);
-                        //    CurrentTaskData = (TaskData)incoming.Data;
-                        //    if(!Cache.ContainsPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash))
-                        //    {
-                        //        ComObject.SendMessage(NetworkMessages.RequestPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash));
-                        //        NetworkMessage incomingPackage = null;
-                                
-                        //        incomingPackage = ComObject.PullMessage("Pacakge Response");
-
-                        //        if (incomingPackage != null)
-                        //        {
-                        //            Cache.AddPackages((PackageTransmit)incomingPackage.Data);
-                        //        }
-                        //    }
-
-                        //    States.UpdateState(State.StartingTask);
-                        //}
-                        //incoming = null;
+                        incoming = ComObject.PullMessage(NetworkMessages.ResponsePackage(null).Message);
+                        if (incoming != null)
+                        {
+                            Cache.AddPackages(new PackageTransmit(incoming.Data.ToString()));
+                        }
+                        incoming = null;
                         break;
                     default:
                         break;
@@ -241,7 +225,7 @@ namespace HiveSuite.Drone
         protected override bool LoadSettings()
         {
             Settings = new DroneSettings(Loging);
-            Settings.Load(Settings.DefaultPath);
+            Settings.Load(Settings.DefaultFilePath);
 
             if (string.IsNullOrEmpty(((DroneSettings)Settings).ServerAddress) || ((DroneSettings)Settings).Port == 0)
             {

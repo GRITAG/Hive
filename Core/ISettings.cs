@@ -15,7 +15,9 @@ namespace HiveSuite.Core
         /// The default file path for the config file
         /// </summary>
         string DefaultPath { get; }
-        
+
+        string DefaultFilePath { get; }
+
         /// <summary>
         /// Creates and stores a config with in the file system
         /// </summary>

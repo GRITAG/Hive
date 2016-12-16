@@ -29,14 +29,16 @@ namespace HiveSuite.Core
             {
                 Directory.Delete(Settings.DefaultPath + "\\temp", true);
             }
-            else
-            {
-                Directory.CreateDirectory(Settings.DefaultPath + "\\temp");
-            }
+            
+            Directory.CreateDirectory(Settings.DefaultPath + "\\temp");
+            
 
             // Write the file sent to a temp dir
-            FileStream fileS = new FileStream(Settings.DefaultPath + "\\temp\\" + packageToAdd.ID + ".zip", FileMode.Create);
-            fileS.Write(packageToAdd.Data, 0, packageToAdd.Data.Length);
+            using (FileStream fileS = new FileStream(Settings.DefaultPath + "\\temp\\" + packageToAdd.ID + ".zip", FileMode.Create))
+            {
+                fileS.Write(packageToAdd.Data, 0, packageToAdd.Data.Length);
+                fileS.Flush();
+            }
 
             string packageDir = DateTime.Now.ToString("MMddyy_HHmmss");
 
@@ -44,7 +46,10 @@ namespace HiveSuite.Core
 
             ZipFile.ExtractToDirectory(Settings.DefaultPath + "\\temp\\" + packageToAdd.ID + ".zip", Settings.DefaultPath + "\\packages\\" + packageDir);
 
+            Directory.Delete(Settings.DefaultPath + "\\temp", true);
+
             packageToAdd.Path = Settings.DefaultPath + "\\packages\\" + packageDir;
+
 
             Packages.Add(packageToAdd);
         }

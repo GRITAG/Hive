@@ -46,9 +46,19 @@ namespace HiveSuite.Drone
                     return Directory.GetCurrentDirectory() + "\\settings.json";
                 }
 
-                return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Hive\\Drone\\settings.json";
+                return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Hive\\Drone";
             }
         }
+
+        [JsonIgnore]
+        public string DefaultFilePath
+        {
+            get
+            {
+                return DefaultPath + "\\settings.json";
+            }
+        }
+
         [JsonIgnore]
         private Core.Logger Logging { get; set; }
 
@@ -131,7 +141,7 @@ namespace HiveSuite.Drone
             Port = 1000;
             ServerAddress = "192.168.1.100";
 
-            Save(DefaultPath);
+            Save(DefaultFilePath);
         }
 
     }
