@@ -46,7 +46,8 @@ namespace SimpleNetworkServer
                 if (requestTask != null)
                 {
                     Console.WriteLine("Task Request");
-                    ComObject.SendMessage(NetworkMessages.ResponseTask(new TaskData()), IPAddress.Parse(requestTask.SenderIP), requestTask.SenderPort);
+                    ComObject.SendMessage(NetworkMessages.ResponseTask(new TaskData { TaskFile = "", PackageHash = testPackage.MD5Hash, PackageID = Guid.Empty, TaskID = Guid.Empty }),
+                        IPAddress.Parse(requestTask.SenderIP), requestTask.SenderPort);
                     Console.WriteLine("Task Reponse sent");
                 }
                 NetworkMessage requestPackage = ComObject.PullMessage(NetworkMessages.RequestPackage(null).Message);

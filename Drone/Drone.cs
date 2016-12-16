@@ -89,6 +89,7 @@ namespace HiveSuite.Drone
                     case State.StartingTask:
                         States.UpdateStatus(Status.NotReadyForWork);
                         TaskExe = new TaskExecution(CurrentTaskData, Cache.GetPackage(CurrentTaskData.PackageID, CurrentTaskData.PackageHash), Loging, Settings);
+                        TaskExe.Run();
                         States.UpdateState(State.Running);
                         break;
                     case State.Running:
@@ -106,8 +107,10 @@ namespace HiveSuite.Drone
                         }
                         break;
                     case State.StoppingTask:
-                        TaskExe.Stop();
+                        if(TaskExe.Running)
+                        //TaskExe.Stop();
                         States.UpdateStatus(Status.NotReadyForWork);
+                        States.UpdateState(State.CleaningUP);
                         break;
                     case State.CleaningUP:
                         States.UpdateState(State.Ready);
@@ -161,6 +164,7 @@ namespace HiveSuite.Drone
                             Cache.AddPackages(new PackageTransmit(incoming.Data.ToString()));
                         }
                         incoming = null;
+                        States.UpdateState(State.StartingTask);
                         break;
                     default:
                         break;
