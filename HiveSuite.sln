@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiveSuite", "HiveSuite.csproj", "{82E0624E-776E-454D-A41D-0A3F764B3485}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleNetworkServer", "..\SimpleNetworkServer\SimpleNetworkServer.csproj", "{D4BDF3C9-8ED6-40D0-A79A-36B0EDA18946}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleNetworkServer", "SimpleNetworkServer\SimpleNetworkServer.csproj", "{D4BDF3C9-8ED6-40D0-A79A-36B0EDA18946}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

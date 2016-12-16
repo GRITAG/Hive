@@ -50,7 +50,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HiveSuite\HiveSuite.csproj">
+    <ProjectReference Include="..\HiveSuite.csproj">
       <Project>{82e0624e-776e-454d-a41d-0a3f764b3485}</Project>
       <Name>HiveSuite</Name>
     </ProjectReference>
