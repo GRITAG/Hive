@@ -113,7 +113,8 @@ namespace HiveSuite.Drone
                         States.UpdateState(State.CleaningUP);
                         break;
                     case State.CleaningUP:
-                        States.UpdateState(State.Ready);
+                        //States.UpdateState(State.Ready);
+                        States.UpdateState(State.ShuttingDown);
                         States.UpdateStatus(Status.NotReadyForWork);
                         break;
                     case State.ResettingWorkspace:

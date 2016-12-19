@@ -62,6 +62,9 @@ namespace HiveSuite.Core.Task
             Process process = new Process();
             ProcessStartInfo startInfo = new ProcessStartInfo("cmd.exe", "/c " + Task.TaskFile);
             startInfo.WorkingDirectory = Package.Path;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.CreateNoWindow = true;
             process.StartInfo = startInfo;
 
             process.Start();
