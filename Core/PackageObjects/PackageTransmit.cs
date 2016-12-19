@@ -9,14 +9,21 @@ using System.Threading.Tasks;
 namespace HiveSuite.Core.PackageObjects
 {
     /// <summary>
-    /// The transmitable package
+    /// The transmittable package
     /// </summary>
     public class PackageTransmit : PackageData
     {
+        /// <summary>
+        /// The binary data of a package
+        /// </summary>
         public byte[] Data { get; set; }
 
         public PackageTransmit() { }
 
+        /// <summary>
+        /// Create a package from a json string
+        /// </summary>
+        /// <param name="json"></param>
         public PackageTransmit(string json)
         {
             PackageTransmit package = JsonConvert.DeserializeObject<PackageTransmit>(json);
@@ -27,6 +34,10 @@ namespace HiveSuite.Core.PackageObjects
             Path = package.Path;
         }
 
+        /// <summary>
+        /// Return the MD5 hash of a package
+        /// </summary>
+        /// <returns></returns>
         public byte[] GetMd5Hash()
         {
             byte[] rawHash;

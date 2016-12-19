@@ -22,8 +22,14 @@ namespace HiveSuite.Core.Network
         /// </summary>
         public object Data { get; set; }
 
+        /// <summary>
+        /// The IP Address that sent the message
+        /// </summary>
         public string SenderIP { get; set; }
 
+        /// <summary>
+        /// The port the message was sent on
+        /// </summary>
         public int SenderPort { get; set; }
 
         public NetworkMessage() { }

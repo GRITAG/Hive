@@ -1,7 +1,7 @@
 ﻿namespace HiveSuite.Core.Network
 {
     /// <summary>
-    /// Simple String / Object collection used as a fancey Enum
+    /// Simple String / Object collection used as a fancy Enum
     /// </summary>
     public class MessageType
     {

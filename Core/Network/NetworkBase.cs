@@ -13,7 +13,13 @@ namespace HiveSuite.Core.Network
     /// </summary>
     public class NetworkBase
     {
+        /// <summary>
+        /// Settings file ref
+        /// </summary>
         protected ISettings Settings { get; set; }
+        /// <summary>
+        /// Thread used for process / task execution 
+        /// </summary>
         protected Thread ListenThread { get; set; }
         
         /// <summary>
