@@ -13,7 +13,6 @@ namespace HiveSuite.Core.Network
     {
         NetPeerConfiguration Config { get; set; }
         static NetServer NetworkObj { get; set; }
-        Thread ListenThread { get; set; }
 
         /// <summary>
         /// Returns connected peers
