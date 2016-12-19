@@ -23,10 +23,19 @@ namespace HiveSuite.Drone
         /// </summary>
         protected DroneState States { get; set; }
 
+        /// <summary>
+        /// The execution object used to house the threaded task 
+        /// </summary>
         protected TaskExecution TaskExe { get; set; }
 
+        /// <summary>
+        /// Data used to run the current task
+        /// </summary>
         protected TaskData CurrentTaskData { get; set; }
         
+        /// <summary>
+        /// Cache of packages used for task execution 
+        /// </summary>
         protected PackageCache Cache { get; set; }
 
         public Drone() : base()
@@ -108,13 +117,13 @@ namespace HiveSuite.Drone
                         break;
                     case State.StoppingTask:
                         if(TaskExe.Running)
-                        //TaskExe.Stop();
+                        TaskExe.Stop();
                         States.UpdateStatus(Status.NotReadyForWork);
                         States.UpdateState(State.CleaningUP);
                         break;
                     case State.CleaningUP:
                         //States.UpdateState(State.Ready);
-                        States.UpdateState(State.ShuttingDown);
+                        States.UpdateState(State.Ready);
                         States.UpdateStatus(Status.NotReadyForWork);
                         break;
                     case State.ResettingWorkspace:
@@ -170,42 +179,6 @@ namespace HiveSuite.Drone
                     default:
                         break;
                 }
-                #endregion
-
-                #region StatusManagment
-                //switch (States.CurrentStatus)
-                //{
-                //    case Status.ReadyForWork:
-                        
-                //        States.UpdateStatus(Status.WaitingForWork);
-                //        break;
-                //    case Status.WaitingForWork:
-
-                //        break;
-                //    case Status.NotReadyForWork:
-
-                //        break;
-                //    default:
-                //        break;
-                //}
-                #endregion
-
-                #region NetMessageManagment
-                // get all network messages
-                // check for state needed messages first
-                // react to other messages
-                //switch(States.CurrentState)
-                //{
-                //    case State.Ready:
-                //        switch(States.CurrentStatus)
-                //        {
-                //            case Status.ReadyForWork:
-                                
-                //                break;
-                //        }
-                //        break;
-                //}
-                //ComObject.PullMessage("");
                 #endregion
 
             }
@@ -275,14 +248,6 @@ namespace HiveSuite.Drone
 
             return false;
         }
-
-        // TODO: Communications - Layer
-        // TODO: Talk to Hive - task
-        // TODO: Init Binary Cache - task / layer
-        // TODO: Execute Task - 
-        // TODO: Cleanup - task
-        // TODO: Close Comm - task
-
 
     }
 }

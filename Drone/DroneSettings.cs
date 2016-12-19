@@ -23,8 +23,14 @@ namespace HiveSuite.Drone
         /// </summary>
         public int Port { get; set; }
 
+        /// <summary>
+        /// The defined timeout on network calls in seconds 
+        /// </summary>
         public int NetworkTimeout { get; set; }
 
+        /// <summary>
+        /// The defined timeout on task execution time in minutes
+        /// </summary>
         public int ExecutionTimeout { get; set; }
 
         // Next few objects are not stored in the Json config
@@ -36,6 +42,7 @@ namespace HiveSuite.Drone
                 return IPAddress.Parse(ServerAddress);
             }
         }
+
         [JsonIgnore]
         public string DefaultPath
         {
