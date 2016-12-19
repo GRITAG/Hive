@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HiveSuite.Queen.Queue
 {
-    interface IQueueStorage
+    public interface IQueueStorage
     {
         TaskData PullNextTask(NetworkMessage revicer);
         TaskData PullTask(Guid id, NetworkMessage revicer);

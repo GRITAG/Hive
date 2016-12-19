@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HiveSuite.Queen.Queue
+namespace HiveSuite.Queen.Provision
 {
-    public class QueueHandler
+    class ProvsionHandler
     {
         // TODO: lock for threading
     }

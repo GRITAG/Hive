@@ -1,5 +1,6 @@
 ﻿using HiveSuite.Core;
 using HiveSuite.Core.Network;
+using HiveSuite.Queen.Queue;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,14 @@ namespace HiveSuite.Queen
     public class Queen : BaseNetworked
     {
         ComHandler Com { get; set; }
+        StorageHandler Storage { get; set; }
 
         public Queen()
         {
             Loging = new Logger();
             LoadSettings();
             Com = new ComHandler(Settings);
+            Storage = new StorageHandler(Settings, new SQLiteStorage());
         }
 
         public override void MainLoop()
@@ -24,9 +27,10 @@ namespace HiveSuite.Queen
             // Handle UDP Request
             NetworkMessage nextMsg = Com.ReadNext();
 
-            if(nextMsg.Message == NetworkMessages.Ready.Message)
+            if(nextMsg.Message == NetworkMessages.RequestTask.Message)
             {
-                Com.SendUDPMessage(NetworkMessages.AddToServer, nextMsg);
+                TaskData task = Storage.NextTask(nextMsg);
+                Com.SendUDPMessage(NetworkMessages.ResponseTask(task), nextMsg);
             }
 
 

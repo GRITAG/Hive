@@ -89,10 +89,13 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queen\ComHandler.cs" />
+    <Compile Include="Queen\PackageObjects\PackageHandler.cs" />
+    <Compile Include="Queen\Provision\ProvsionHandler.cs" />
     <Compile Include="Queen\QueenSettings.cs" />
     <Compile Include="Queen\Queue\IQueueStorage.cs" />
     <Compile Include="Queen\Queue\QueueHandler.cs" />
     <Compile Include="Queen\Queue\SQLiteStorage.cs" />
+    <Compile Include="Queen\StorageHandler.cs" />
     <Compile Include="Queen\Web\WebHandler.cs" />
     <Compile Include="Queen\Queen.cs" />
     <Compile Include="Test\DroneSettingsTests.cs" />
@@ -112,7 +115,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Queen\Provision\" />
     <Folder Include="Queen\Web\API\" />
   </ItemGroup>
   <ItemGroup>
