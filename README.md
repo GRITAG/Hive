@@ -29,3 +29,7 @@ For a first time build run:
 To build the solution run:
 
     .\build.ps1
+
+## More information
+
+Please see the [Wiki](https://github.com/SwarmAutomation/Hive/wiki) for more information.
