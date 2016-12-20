@@ -42,7 +42,7 @@ namespace HiveSuite.Queen
         {
             NetworkMessage currentMsg = NetServer.ReadMessage();
 
-            if(currentMsg.Message == NetworkMessages.Ready.Message)
+            if(currentMsg != null && currentMsg.Message == NetworkMessages.Ready.Message)
             {
                 SendUDPMessage(NetworkMessages.AddToServer, currentMsg);
                 return null;

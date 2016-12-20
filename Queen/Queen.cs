@@ -14,25 +14,35 @@ namespace HiveSuite.Queen
         ComHandler Com { get; set; }
         StorageHandler Storage { get; set; }
 
+        bool Shutdown = false;
+
         public Queen()
         {
+            Settings = new QueenSettings(Loging);
             Loging = new Logger();
-            LoadSettings();
             Com = new ComHandler(Settings);
             Storage = new StorageHandler(Settings, new SQLiteStorage());
         }
 
         public override void MainLoop()
         {
-            // Handle UDP Request
-            NetworkMessage nextMsg = Com.ReadNext();
+            Settings.Load(Settings.DefaultFilePath);
+            Com.StartWeb();
 
-            if(nextMsg.Message == NetworkMessages.RequestTask.Message)
+            while (!Shutdown)
             {
-                TaskData task = Storage.NextTask(nextMsg);
-                Com.SendUDPMessage(NetworkMessages.ResponseTask(task), nextMsg);
-            }
+                // Handle UDP Request
+                NetworkMessage nextMsg = Com.ReadNext();
 
+                if (nextMsg != null)
+                {
+                    if (nextMsg.Message == NetworkMessages.RequestTask.Message)
+                    {
+                        TaskData task = Storage.NextTask(nextMsg);
+                        Com.SendUDPMessage(NetworkMessages.ResponseTask(task), nextMsg);
+                    }
+                }
+            }
 
         }
 
@@ -44,7 +54,7 @@ namespace HiveSuite.Queen
 
         protected override bool LoadSettings()
         {
-            Settings = new QueenSettings();
+            Settings = new QueenSettings(Loging);
             Settings.Load(Settings.DefaultFilePath);
             return true;
         }

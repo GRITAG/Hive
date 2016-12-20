@@ -50,7 +50,7 @@ namespace HiveSuite.Drone
             {
                 if(StaticState.unitTesting)
                 {
-                    return Directory.GetCurrentDirectory() + "\\settings.json";
+                    return Directory.GetCurrentDirectory();
                 }
 
                 return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Hive\\Drone";
@@ -146,6 +146,8 @@ namespace HiveSuite.Drone
         public void GenerateConfig()
         {
             Port = 1000;
+            NetworkTimeout = 60;
+            ExecutionTimeout = 10;
             ServerAddress = "192.168.1.100";
 
             Save(DefaultFilePath);

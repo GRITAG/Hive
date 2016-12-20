@@ -18,6 +18,10 @@ namespace HiveSuite.Queen.Web
         public WebHandler(ISettings settings)
         {
             Server = new WebServer("http://localhost:8080/", new NullLog(), RoutingStrategy.Regex);
+            if(!Directory.Exists(Directory.GetCurrentDirectory() + "\\html"))
+            {
+                Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\html");
+            }
             Server.WithStaticFolderAt(Directory.GetCurrentDirectory() + "\\html");
             Server.RegisterModule(new WebApiModule());
             //Server.Module<WebApiModule>().RegisterController<null>();

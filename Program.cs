@@ -20,7 +20,7 @@ namespace HiveSuite
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            args = new string[] { "drone" };
+            args = new string[] { "queen" };
 
             switch(args[0].ToLower())
             {
@@ -31,6 +31,15 @@ namespace HiveSuite
                     Application = new Drone.Drone();
                     Application.Settings = new Drone.DroneSettings(Application.Loging);
                     Application.GenerateConfig();
+                    Environment.Exit(0);
+                    break;
+                case "queen":
+                    Application = new Queen.Queen();
+                    break;
+                case "configqueen":
+                    Application = new Queen.Queen();
+                    Application.Settings = new Queen.QueenSettings(Application.Loging);
+                    Application.Settings.GenerateConfig();
                     Environment.Exit(0);
                     break;
             }

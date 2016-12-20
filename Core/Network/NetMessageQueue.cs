@@ -47,8 +47,12 @@ namespace HiveSuite.Core.Network
         public NetworkMessage Dequeue()
         {
             QueueLock.EnterWriteLock();
-            NetworkMessage result = Messages.First();
-            Messages.RemoveFirst();
+            NetworkMessage result = null;
+            if (Messages.Count > 1)
+            {
+                result = Messages.First();
+                Messages.RemoveFirst();
+            }
             QueueLock.ExitWriteLock();
             return result;
         }
