@@ -54,6 +54,7 @@ namespace HiveSuite.Drone
         ReadyForWork,
         WaitingForWork,
         NotReadyForWork,
+        Error
     }
 
     /// <summary>

@@ -21,6 +21,11 @@ namespace HiveSuite.Core
         /// <param name="message">string message to store in the log</param>
         public void Log(LogLevel level, string message)
         {
+            Loging.Log(TranslateLogLevel(level), message);
+        }
+
+        public static NLog.LogLevel TranslateLogLevel(LogLevel level)
+        {
             NLog.LogLevel logLevel = NLog.LogLevel.Off;
 
             switch (level)
@@ -45,7 +50,7 @@ namespace HiveSuite.Core
                     break;
             }
 
-            Loging.Log(logLevel, message);
+            return logLevel;
         }
     }
 

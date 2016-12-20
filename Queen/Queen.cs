@@ -31,17 +31,22 @@ namespace HiveSuite.Queen
 
             while (!Shutdown)
             {
+                #region NetworkMsgResolve
                 // Handle UDP Request
                 NetworkMessage nextMsg = Com.ReadNext();
 
                 if (nextMsg != null)
                 {
-                    if (nextMsg.Message == NetworkMessages.RequestTask.Message)
+                    if (nextMsg.Message == NetworkMessages.RequestTaskMessage)
                     {
                         TaskData task = Storage.NextTask(nextMsg);
                         Com.SendUDPMessage(NetworkMessages.ResponseTask(task), nextMsg);
                     }
                 }
+                #endregion
+
+                // TODO: Validate Drones / Clean Up
+                // TODO: Re-queue Work if valid
             }
 
         }
