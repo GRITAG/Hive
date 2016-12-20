@@ -25,8 +25,18 @@ namespace HiveSuite.Core
         /// The file with in the package to run
         /// </summary>
         public string TaskFile { get; set; }
+        public TaskResultType Result { get; set; }
 
-        public TaskData() { }
+        [JsonIgnore]
+        public string AssignedAddress { get; set; }
+        [JsonIgnore]
+        public bool Active { get; set; }
+
+        public TaskData()
+        {
+            TaskID = Guid.NewGuid();
+            Result = TaskResultType.None;
+        }
 
         /// <summary>
         /// Construct a taskdata object from a Json serialized task data
@@ -40,6 +50,12 @@ namespace HiveSuite.Core
             PackageID = testTemp.PackageID;
             PackageHash = testTemp.PackageHash;
             TaskFile = testTemp.TaskFile;
+            Result = testTemp.Result;
         }
+    }
+
+    public enum TaskResultType
+    {
+        None, Passed, Failed
     }
 }

@@ -17,6 +17,7 @@ parallel task execution using a simple client / server model
 * [NUnit](https://www.nunit.org) - Unit Testing
 * [EmbedIO](https://unosquare.github.io/embedio) - Embedded Web Server
 * [NLog](http://nlog-project.org) - Logging
+* [SQLite](https://system.data.sqlite.org/index.html/doc/trunk/www/index.wiki) - Default Datatbase
 
 ## Build
 

@@ -21,7 +21,7 @@ namespace HiveSuite.Queen
             Settings = new QueenSettings(Loging);
             Loging = new Logger();
             Com = new ComHandler(Settings);
-            Storage = new StorageHandler(Settings, new SQLiteStorage());
+            Storage = new StorageHandler(Settings, new SQLiteStorage(Settings));
         }
 
         public override void MainLoop()

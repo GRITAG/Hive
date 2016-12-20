@@ -19,5 +19,7 @@ namespace HiveSuite.Queen.Queue
         TaskData PeakNextTask();
         List<TaskData> PeakAllTasks();
         void TaskComplete(Guid id, bool passFail);
+        void RemoveTask(Guid id);
+        void RequeueTask(Guid id);
     }
 }
