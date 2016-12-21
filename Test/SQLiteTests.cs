@@ -1,4 +1,5 @@
 ﻿using HiveSuite.Core;
+using HiveSuite.Core.Network;
 using HiveSuite.Drone;
 using HiveSuite.Queen.Queue;
 using NUnit.Framework;
@@ -48,7 +49,7 @@ namespace HiveSuite.Test
         [TearDown]
         public void TearDown()
         {
-            foreach(TaskData currentTask in DB.PeakAllTasks())
+            foreach (TaskData currentTask in DB.PeakAllTasks())
             {
                 DB.RemoveTask(currentTask.TaskID);
             }
@@ -75,6 +76,58 @@ namespace HiveSuite.Test
             DB.AddTask(TaskTest1);
             DB.AddTask(TaskTest2);
             Assert.AreEqual(2, DB.PeakAllTasks().Count);
+        }
+
+        [Test]
+        public void TaskCount()
+        {
+            DB.AddTask(TaskTest1);
+            DB.AddTask(TaskTest2);
+            Assert.AreEqual(2, DB.TaskCount());
+        }
+
+        [Test]
+        public void PeakNextTask()
+        {
+            DB.AddTask(TaskTest1);
+            DB.AddTask(TaskTest2);
+            Assert.AreEqual(TaskTest1.TaskID, DB.PeakNextTask().TaskID);
+        }
+
+        [Test]
+        public void PullTask()
+        {
+            DB.AddTask(TaskTest1);
+            DB.AddTask(TaskTest2);
+            TaskData pulledTask = DB.PullTask(TaskTest1.TaskID, new NetworkMessage
+            {
+                SenderIP = "192.168.1.1"
+            });
+            Assert.AreEqual(true, pulledTask.Active);
+            Assert.AreEqual("192.168.1.1", pulledTask.AssignedAddress);
+        }
+
+        [Test]
+        public void PullTaskNegative()
+        {
+            DB.AddTask(TaskTest1);
+            DB.AddTask(TaskTest2);
+            TaskData pulledTask = DB.PullTask(TaskTest1.TaskID, new NetworkMessage
+            {
+                SenderIP = "192.168.1.1"
+            });
+            
+            try
+            {
+                TaskData pulledTask2 = DB.PullTask(TaskTest1.TaskID, new NetworkMessage
+                {
+                    SenderIP = "192.168.1.1"
+                });
+            }
+            catch(Exception)
+            {
+                Assert.Pass();
+            }
         }
     }
 }

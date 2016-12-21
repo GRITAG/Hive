@@ -14,7 +14,7 @@ namespace HiveSuite.Queen.Queue
         TaskData PullTask(Guid id, NetworkMessage revicer);
         void AddTask(TaskData task);
         List<TaskData> PullAllTasks(NetworkMessage revicer);
-        int TaksCount();
+        int TaskCount();
         TaskData PeakTask(Guid id);
         TaskData PeakNextTask();
         List<TaskData> PeakAllTasks();

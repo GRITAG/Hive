@@ -109,6 +109,11 @@ namespace HiveSuite.Queen.Queue
             return result;
         }
 
+        /// <summary>
+        /// Read all task data in the queue
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         private List<TaskData> ReadTasksData(SQLiteDataReader reader)
         {
             List<TaskData> tasks = new List<TaskData>();
@@ -181,9 +186,16 @@ namespace HiveSuite.Queen.Queue
             return ReadTasksData(reader);
         }
 
+        /// <summary>
+        /// peak at the net task
+        /// </summary>
+        /// <returns></returns>
         public TaskData PeakNextTask()
         {
-            throw new NotImplementedException();
+            string command = "SELECT * FROM queue;";
+            SQLiteCommand peakNext = new SQLiteCommand(command, DBConnection);
+            SQLiteDataReader reader = peakNext.ExecuteReader(System.Data.CommandBehavior.SingleResult);
+            return ReadTaskData(reader);
         }
 
         /// <summary>
@@ -209,9 +221,40 @@ namespace HiveSuite.Queen.Queue
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Pull th task with the given id and assign execution to the network message sender passed
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="revicer"></param>
+        /// <returns></returns>
         public TaskData PullTask(Guid id, NetworkMessage revicer)
         {
-            throw new NotImplementedException();
+            TaskData currentTask = null;
+
+            string select = "SELECT * FROM queue WHERE TaskID='" + id.ToString() + "';";
+            string update = "UPDATE queue SET active = 1, AssignedAddress = '" + revicer.SenderIP + "' WHERE TaskID='" + id.ToString() + "';";
+
+            SQLiteCommand selectCommand = new SQLiteCommand(select, DBConnection);
+            SQLiteCommand selectCommand2 = new SQLiteCommand(select, DBConnection);
+            SQLiteCommand updateCommand = new SQLiteCommand(update, DBConnection);
+
+            if (!ReadTaskData(selectCommand.ExecuteReader()).Active)
+            {
+                if (updateCommand.ExecuteNonQuery() > 0)
+                {
+                    currentTask = ReadTaskData(selectCommand2.ExecuteReader());
+                }
+                else
+                {
+                    throw new Exception("Could not find task " + id.ToString() + " to update");
+                }
+            }
+            else
+            {
+                throw new Exception("The task " + id.ToString() + "has already been pulled");
+            }
+
+            return currentTask;
         }
 
         /// <summary>
@@ -237,9 +280,16 @@ namespace HiveSuite.Queen.Queue
             throw new NotImplementedException();
         }
 
-        public int TaksCount()
+        /// <summary>
+        /// Retrieve the count of tasks in the queue
+        /// </summary>
+        /// <returns></returns>
+        public int TaskCount()
         {
-            throw new NotImplementedException();
+            string command = "SELECT * FROM queue;";
+            SQLiteCommand peakAllCommand = new SQLiteCommand(command, DBConnection);
+            SQLiteDataReader reader = peakAllCommand.ExecuteReader();
+            return ReadTasksData(reader).Count;
         }
 
         public void TaskComplete(Guid id, bool passFail)
