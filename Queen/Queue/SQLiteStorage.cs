@@ -15,7 +15,6 @@ namespace HiveSuite.Queen.Queue
         ISettings Settings { get; set; }
         SQLiteConnection DBConnection { get; set; }
 
-
         public SQLiteStorage(ISettings settings)
         {
             Settings = settings;
@@ -35,20 +34,11 @@ namespace HiveSuite.Queen.Queue
             {
                 CreateTables();
             }
-
-            // TEMP
-            AddTask(new TaskData
-            {
-                TaskID = Guid.NewGuid(),
-                PackageID = Guid.NewGuid(),
-                PackageHash = new byte[10],
-                TaskFile = "test",
-                Result = TaskResultType.Failed,
-                Active = false,
-                AssignedAddress = "1234567890"
-            });
         }
 
+        /// <summary>
+        /// Creates a table set for a new queue store
+        /// </summary>
         private void CreateTables()
         {
             string createQueue = "CREATE TABLE Queue (TaskID TEXT, PackageID TEXT, PackageHash BLOB, TaskFile TEXT, Result INTEGER, AssignedAddress TEXT, Active BOOLEAN);";
@@ -60,6 +50,69 @@ namespace HiveSuite.Queen.Queue
             createDoneCommand.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// helper method to read a byte array / blob from a result
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        private static byte[] GetBytes(SQLiteDataReader reader, int col)
+        {
+            const int CHUNK_SIZE = 2 * 1024;
+            byte[] buffer = new byte[CHUNK_SIZE];
+            long bytesRead;
+            long fieldOffset = 0;
+            using (MemoryStream stream = new MemoryStream())
+            {
+                while ((bytesRead = reader.GetBytes(col, fieldOffset, buffer, 0, buffer.Length)) > 0)
+                {
+                    stream.Write(buffer, 0, (int)bytesRead);
+                    fieldOffset += bytesRead;
+                }
+                return stream.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Used to read a single taskdata result
+        /// </summary>
+        /// <param name="resultReader"></param>
+        /// <returns></returns>
+        private TaskData ReadTaskData(SQLiteDataReader resultReader)
+        {
+            TaskData result = null;
+            resultReader.Read();
+
+            if (resultReader.HasRows)
+            {
+                result = new TaskData();
+
+                result.TaskID = Guid.Parse(resultReader.GetString(0));
+                result.PackageID = Guid.Parse(resultReader.GetString(1));
+                result.PackageHash = GetBytes(resultReader, 2);
+                result.TaskFile = resultReader.GetString(3);
+                switch (resultReader.GetInt32(4))
+                {
+                    case 0:
+                        result.Result = TaskResultType.None;
+                        break;
+                    case 1:
+                        result.Result = TaskResultType.Passed;
+                        break;
+                    case 2:
+                        result.Result = TaskResultType.Failed;
+                        break;
+                }
+                result.AssignedAddress = resultReader.GetString(5);
+                result.Active = resultReader.GetBoolean(6);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Add a task to the queue
+        /// </summary>
+        /// <param name="task"></param>
         public void AddTask(TaskData task)
         {
             int activeValue = 0;
@@ -71,14 +124,15 @@ namespace HiveSuite.Queen.Queue
 
             string command = "INSERT INTO Queue (TaskID, PackageID, PackageHash, TaskFile, Result, AssignedAddress, Active) VALUES (" +
                 "'" + task.TaskID.ToString() + "'," +
-                "'" + task.PackageID.ToString() + "','" +
-                Encoding.ASCII.GetString(task.PackageHash) + "'," +
+                "'" + task.PackageID.ToString() + "'," +
+                "@hash," +
                 "'" + task.TaskFile + "'," +
                 (int)task.Result + "," +
                 "'" + task.AssignedAddress + "'," +
                 activeValue + ");";
 
             SQLiteCommand addTaskCommand = new SQLiteCommand(command, DBConnection);
+            addTaskCommand.Parameters.Add("@hash", System.Data.DbType.Binary).Value = task.PackageHash;
             addTaskCommand.ExecuteNonQuery();
         }
 
@@ -92,9 +146,17 @@ namespace HiveSuite.Queen.Queue
             throw new NotImplementedException();
         }
 
-        public TaskData PeakTask()
+        /// <summary>
+        /// Peak at a task in the queue
+        /// </summary>
+        /// <param name="id">the id of the task to peak at</param>
+        /// <returns></returns>
+        public TaskData PeakTask(Guid id)
         {
-            throw new NotImplementedException();
+            string command = "SELECT * FROM queue WHERE TaskID='" + id.ToString() + "';";
+            SQLiteCommand peakCommand = new SQLiteCommand(command, DBConnection);
+            SQLiteDataReader resultReader = peakCommand.ExecuteReader();
+            return ReadTaskData(resultReader);
         }
 
         public List<TaskData> PullAllTasks(NetworkMessage revicer)
@@ -112,9 +174,22 @@ namespace HiveSuite.Queen.Queue
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Remove a task from the Queue
+        /// </summary>
+        /// <param name="id"></param>
         public void RemoveTask(Guid id)
         {
-            throw new NotImplementedException();
+            if (PeakTask(id) != null)
+            {
+                string command = "DELETE from queue WHERE TaskID='" + id.ToString() + "';";
+                SQLiteCommand peakCommand = new SQLiteCommand(command, DBConnection);
+                peakCommand.ExecuteNonQuery();
+            }
+            else
+            {
+                throw new Exception("No task by " + id.ToString() + " to remove");
+            }
         }
 
         public void RequeueTask(Guid id)

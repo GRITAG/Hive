@@ -125,6 +125,7 @@
     <Compile Include="Test\LoggerTests.cs" />
     <Compile Include="Test\NetMessageQueueTests.cs" />
     <Compile Include="Test\NetworkTests.cs" />
+    <Compile Include="Test\SQLiteTests.cs" />
     <Compile Include="Test\UnitTest.cs" />
   </ItemGroup>
   <ItemGroup>
