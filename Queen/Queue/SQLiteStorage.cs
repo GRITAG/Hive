@@ -211,14 +211,58 @@ namespace HiveSuite.Queen.Queue
             return ReadTaskData(resultReader);
         }
 
+        /// <summary>
+        /// Pull all none active tasks from the queue
+        /// </summary>
+        /// <param name="revicer"></param>
+        /// <returns></returns>
         public List<TaskData> PullAllTasks(NetworkMessage revicer)
         {
-            throw new NotImplementedException();
+            string getAllTasks = "SELECT * FROM queue WHERE Active = 0;";
+            string update;
+            SQLiteCommand updateCommand;
+            SQLiteCommand getAllTasksCommand = new SQLiteCommand(getAllTasks, DBConnection);
+            List<TaskData> result = ReadTasksData(getAllTasksCommand.ExecuteReader());
+
+            if(result.Count > 0)
+            {
+                foreach(TaskData currentTask in result)
+                {
+                    update = "UPDATE queue SET active = 1, AssignedAddress = '" + revicer.SenderIP + "' WHERE TaskID='" + currentTask.TaskID.ToString() + "';";
+                    updateCommand = new SQLiteCommand(update, DBConnection);
+                    updateCommand.ExecuteNonQuery();
+                }
+
+                return result;
+            }
+
+            return null;
         }
 
+        /// <summary>
+        /// Pull the next task to be run
+        /// </summary>
+        /// <param name="revicer"></param>
+        /// <returns></returns>
         public TaskData PullNextTask(NetworkMessage revicer)
         {
-            throw new NotImplementedException();
+            string findTask = "SELECT * FROM queue WHERE Active = 0;";
+            
+            SQLiteCommand findTaskCommand = new SQLiteCommand(findTask, DBConnection);
+            SQLiteDataReader reader = findTaskCommand.ExecuteReader(System.Data.CommandBehavior.SingleResult);
+            TaskData foundTask = ReadTaskData(reader);
+
+            if (foundTask != null)
+            {
+                string update = "UPDATE queue SET active = 1, AssignedAddress = '" + revicer.SenderIP + "' WHERE TaskID='" + foundTask.TaskID.ToString() + "';";
+                SQLiteCommand updateCommand = new SQLiteCommand(update, DBConnection);
+                updateCommand.ExecuteNonQuery();
+                return foundTask;
+            }
+            else
+            {
+                throw new Exception("No tasks in queue");
+            }
         }
 
         /// <summary>
@@ -263,11 +307,14 @@ namespace HiveSuite.Queen.Queue
         /// <param name="id"></param>
         public void RemoveTask(Guid id)
         {
-            if (PeakTask(id) != null)
+            TaskData result = PeakTask(id);
+            if (result != null)
             {
                 string command = "DELETE from queue WHERE TaskID='" + id.ToString() + "';";
                 SQLiteCommand peakCommand = new SQLiteCommand(command, DBConnection);
                 peakCommand.ExecuteNonQuery();
+
+
             }
             else
             {
@@ -275,9 +322,34 @@ namespace HiveSuite.Queen.Queue
             }
         }
 
+        /// <summary>
+        /// Requeue the given task
+        /// </summary>
+        /// <param name="id"></param>
         public void RequeueTask(Guid id)
         {
-            throw new NotImplementedException();
+            string command = "SELECT * FROM queue WHERE TaskID='" + id.ToString() + "';";
+            SQLiteCommand peakCommand = new SQLiteCommand(command, DBConnection);
+            SQLiteDataReader resultReader = peakCommand.ExecuteReader();
+            TaskData result = ReadTaskData(resultReader);
+
+            if (result != null)
+            {
+                if (result.Active)
+                {
+                    string update = "UPDATE queue SET active = 0 WHERE TaskID='" + id.ToString() + "';";
+                    SQLiteCommand updateCommand = new SQLiteCommand(update, DBConnection);
+                    updateCommand.ExecuteNonQuery();
+                }
+                else
+                {
+                    throw new Exception("Task " + id.ToString() + " is already active");
+                }
+            }
+            else
+            {
+                throw new Exception("Task " + id.ToString() + " could not be found");
+            }
         }
 
         /// <summary>
@@ -292,9 +364,59 @@ namespace HiveSuite.Queen.Queue
             return ReadTasksData(reader).Count;
         }
 
+        /// <summary>
+        /// Move a task to the complete status
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="passFail"></param>
         public void TaskComplete(Guid id, bool passFail)
         {
-            throw new NotImplementedException();
+            string command = "SELECT * FROM queue WHERE TaskID='" + id.ToString() + "';";
+            SQLiteCommand peakCommand = new SQLiteCommand(command, DBConnection);
+            SQLiteDataReader resultReader = peakCommand.ExecuteReader();
+            TaskData result = ReadTaskData(resultReader);
+
+            if (result != null)
+            {
+                if(passFail)
+                {
+                    result.Result = TaskResultType.Passed;
+                }
+                else
+                {
+                    result.Result = TaskResultType.Failed;
+                }
+
+                #region AddToArchive
+                int activeValue = 0;
+
+                if (result.Active)
+                {
+                    activeValue = 1;
+                }
+
+                string commandAddArchive = "INSERT INTO Done (TaskID, PackageID, PackageHash, TaskFile, Result, AssignedAddress, Active) VALUES (" +
+                    "'" + result.TaskID.ToString() + "'," +
+                    "'" + result.PackageID.ToString() + "'," +
+                    "@hash," +
+                    "'" + result.TaskFile + "'," +
+                    (int)result.Result + "," +
+                    "'" + result.AssignedAddress + "'," +
+                    activeValue + ");";
+
+                SQLiteCommand addTaskCommand = new SQLiteCommand(commandAddArchive, DBConnection);
+                addTaskCommand.Parameters.Add("@hash", System.Data.DbType.Binary).Value = result.PackageHash;
+                addTaskCommand.ExecuteNonQuery();
+                #endregion
+
+                string remove = "DELETE from queue WHERE TaskID='" + result.TaskID.ToString() + "';";
+                SQLiteCommand removeCommand = new SQLiteCommand(remove, DBConnection);
+                removeCommand.ExecuteNonQuery();
+            }
+            else
+            {
+                throw new Exception("Task " + id.ToString() + " could not be found");
+            }
         }
     }
 }

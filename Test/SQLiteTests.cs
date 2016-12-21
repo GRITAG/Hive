@@ -129,5 +129,59 @@ namespace HiveSuite.Test
                 Assert.Pass();
             }
         }
+
+        [Test]
+        public void PullNextTask()
+        {
+            DB.AddTask(TaskTest1);
+            DB.AddTask(TaskTest2);
+            Assert.AreEqual(false, DB.PeakTask(TaskTest1.TaskID).Active);
+            TaskData actual = DB.PullNextTask(new NetworkMessage
+            {
+                SenderIP = "192.168.1.1"
+            });
+            Assert.AreEqual(TaskTest1.TaskID, actual.TaskID);
+        }
+
+        [Test]
+        public void PullAllTasks()
+        {
+            DB.AddTask(TaskTest1);
+            DB.AddTask(TaskTest2);
+            List<TaskData> result = DB.PullAllTasks(new NetworkMessage
+            {
+                SenderIP = "192.168.1.1"
+            });
+            Assert.AreEqual(true, DB.PeakTask(TaskTest1.TaskID).Active);
+            Assert.AreEqual(true, DB.PeakTask(TaskTest2.TaskID).Active);
+            Assert.AreEqual(2, result.Count);
+        }
+
+        [Test]
+        public void RequeueTask()
+        {
+            DB.AddTask(TaskTest1);
+            DB.AddTask(TaskTest2);
+            TaskData pulledTask = DB.PullTask(TaskTest1.TaskID, new NetworkMessage
+            {
+                SenderIP = "192.168.1.1"
+            });
+            Assert.AreEqual(true, pulledTask.Active);
+            DB.RequeueTask(pulledTask.TaskID);
+            Assert.AreEqual(false, DB.PeakTask(TaskTest1.TaskID).Active);
+        }
+
+        [Test]
+        public void TaskComplete()
+        {
+            DB.AddTask(TaskTest1);
+            DB.AddTask(TaskTest2);
+            TaskData pulledTask = DB.PullTask(TaskTest1.TaskID, new NetworkMessage
+            {
+                SenderIP = "192.168.1.1"
+            });
+            DB.TaskComplete(TaskTest1.TaskID, true);
+            // TODO: better assert
+        }
     }
 }
