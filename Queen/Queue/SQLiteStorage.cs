@@ -109,6 +109,39 @@ namespace HiveSuite.Queen.Queue
             return result;
         }
 
+        private List<TaskData> ReadTasksData(SQLiteDataReader reader)
+        {
+            List<TaskData> tasks = new List<TaskData>();
+            TaskData currentTask = null;
+
+            while (reader.Read())
+            {
+                currentTask = new TaskData();
+
+                currentTask.TaskID = Guid.Parse(reader.GetString(0));
+                currentTask.PackageID = Guid.Parse(reader.GetString(1));
+                currentTask.PackageHash = GetBytes(reader, 2);
+                currentTask.TaskFile = reader.GetString(3);
+                switch (reader.GetInt32(4))
+                {
+                    case 0:
+                        currentTask.Result = TaskResultType.None;
+                        break;
+                    case 1:
+                        currentTask.Result = TaskResultType.Passed;
+                        break;
+                    case 2:
+                        currentTask.Result = TaskResultType.Failed;
+                        break;
+                }
+                currentTask.AssignedAddress = reader.GetString(5);
+                currentTask.Active = reader.GetBoolean(6);
+                tasks.Add(currentTask);
+            }
+
+            return tasks;
+        }
+
         /// <summary>
         /// Add a task to the queue
         /// </summary>
@@ -136,9 +169,16 @@ namespace HiveSuite.Queen.Queue
             addTaskCommand.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Peak at all tasks in the queue
+        /// </summary>
+        /// <returns></returns>
         public List<TaskData> PeakAllTasks()
         {
-            throw new NotImplementedException();
+            string command = "SELECT * FROM queue;";
+            SQLiteCommand peakAllCommand = new SQLiteCommand(command, DBConnection);
+            SQLiteDataReader reader = peakAllCommand.ExecuteReader();
+            return ReadTasksData(reader);
         }
 
         public TaskData PeakNextTask()
