@@ -1,15 +1,10 @@
 ﻿using HiveSuite.Drone;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HiveSuite.Test
 {
-    [TestFixture]
+    [TestFixture(Category ="Config")]
     public class DroneSettingsTests : UnitTest
     {
         DroneSettings Settings { get; set; }

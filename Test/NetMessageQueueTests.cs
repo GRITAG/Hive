@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace HiveSuite.Test
 {
-    [TestFixture]
+    [TestFixture(Category ="Queue")]
     public class NetMessageQueueTests : UnitTest
     {
         NetMessageQueue Queue { get; set; }

@@ -1,15 +1,10 @@
 ﻿using HiveSuite.Core;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HiveSuite.Test
 {
-    [TestFixture]
+    [TestFixture(Category ="Logging")]
     public class LoggerTests : UnitTest
     {
         Logger Log { get; set; }
