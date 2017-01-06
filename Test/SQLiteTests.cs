@@ -53,6 +53,8 @@ namespace HiveSuite.Test
             {
                 DB.RemoveTask(currentTask.TaskID);
             }
+
+            DB.Close();
         }
 
         [Test]

@@ -418,5 +418,10 @@ namespace HiveSuite.Queen.Queue
                 throw new Exception("Task " + id.ToString() + " could not be found");
             }
         }
+
+        public void Close()
+        {
+            DBConnection.Close();
+        }
     }
 }

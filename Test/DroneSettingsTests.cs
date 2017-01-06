@@ -33,7 +33,7 @@ namespace HiveSuite.Test
         public void GenConfig()
         {
             Settings.GenerateConfig();
-            Assert.IsTrue(File.Exists(Settings.DefaultPath));
+            Assert.IsTrue(File.Exists(Settings.DefaultFilePath));
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace HiveSuite.Test
             Settings = null;
             Assert.IsNull(Settings);
             Settings = new DroneSettings(new Core.Logger());
-            Settings.Load(Settings.DefaultPath);
+            Settings.Load(Settings.DefaultFilePath);
             Assert.AreEqual(1000, Settings.Port);
             Assert.AreEqual("192.168.1.100", Settings.ServerAddress);
         }
@@ -60,11 +60,11 @@ namespace HiveSuite.Test
 
             Settings.ServerAddress = "123456789";
             Settings.Port = 1;
-            Settings.Save(Settings.DefaultPath);
+            Settings.Save(Settings.DefaultFilePath);
             Settings = null;
 
             Settings = new DroneSettings(new Core.Logger());
-            Settings.Load(Settings.DefaultPath);
+            Settings.Load(Settings.DefaultFilePath);
             Assert.AreEqual(1, Settings.Port);
             Assert.AreEqual("123456789", Settings.ServerAddress);
         }
