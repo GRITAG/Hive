@@ -60,6 +60,11 @@ namespace HiveSuite.Core.Network
             return new NetworkMessage(RequestTaskMessage, data);
         }
 
+        public static NetworkMessage ReponseNoTask()
+        {
+            return new NetworkMessage(ResponseNoTaskMessage, null);
+        }
+
         public static NetworkMessage ResponsePackage(PackageTransmit data)
         {
             return new NetworkMessage(ResponsePackageMessage, data);
@@ -84,6 +89,7 @@ namespace HiveSuite.Core.Network
         // Queen
         public const string AddedToServerMessage = "Added to Server";
         public const string ResponseTaskMessage = "Task Response";
+        public const string ResponseNoTaskMessage = "No Tasks Currently";
         public const string ResponsePackageMessage = "Package Response";
         public const string StatusReceivedMessage = "Status Received";
         public const string ErrorReceivedMessage = "Error Received";

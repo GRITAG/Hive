@@ -16,6 +16,8 @@ namespace HiveSuite.Core
         public byte[] MD5Hash { get; set; }
         public string Path { get; set; }
 
+        
+
         // TODO: add a package info file thing so we do not have to redownload packages
     }
 }

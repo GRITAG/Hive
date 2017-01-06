@@ -20,12 +20,17 @@ namespace HiveSuite.Queen
         {
             Settings = settings;
             Queue = queue;
-            Packages = new PackageHandler();
+            Packages = new PackageHandler(Settings);
         }
 
         public TaskData NextTask(NetworkMessage incomingMsg)
         {
             return Queue.PullNextTask(incomingMsg);
+        }
+
+        public Package GetPackage(Guid id, byte[] md5)
+        {
+            return Packages.GetPackage(id, md5);
         }
     }
 }

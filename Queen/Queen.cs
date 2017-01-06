@@ -40,7 +40,27 @@ namespace HiveSuite.Queen
                     if (nextMsg.Message == NetworkMessages.RequestTaskMessage)
                     {
                         TaskData task = Storage.NextTask(nextMsg);
-                        Com.SendUDPMessage(NetworkMessages.ResponseTask(task), nextMsg);
+                        if (task != null)
+                        {
+                            Com.SendUDPMessage(NetworkMessages.ResponseTask(task), nextMsg);
+                        }
+                        else
+                        {
+                            Com.SendUDPMessage(NetworkMessages.ReponseNoTask(), nextMsg);
+                        }
+                    }
+                    else if(nextMsg.Message == NetworkMessages.ReadyMessage)
+                    {
+                        Com.SendUDPMessage(NetworkMessages.AddToServer, nextMsg);
+                    }
+                    else if(nextMsg.Message == NetworkMessages.RequestPackageMessge)
+                    {
+                        PackageData packageInfo = (PackageData)nextMsg.Data;
+                        Package packageFound = Storage.GetPackage(packageInfo.ID, packageInfo.MD5Hash);
+                        if(packageFound != null)
+                        {
+
+                        }
                     }
                 }
                 #endregion
