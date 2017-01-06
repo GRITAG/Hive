@@ -422,6 +422,7 @@ namespace HiveSuite.Queen.Queue
         public void Close()
         {
             DBConnection.Close();
+            DBConnection.Dispose();
         }
     }
 }

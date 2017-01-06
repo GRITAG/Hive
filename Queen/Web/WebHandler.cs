@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Unosquare.Labs.EmbedIO;
-using Unosquare.Labs.EmbedIO.Log;
 using Unosquare.Labs.EmbedIO.Modules;
 
 namespace HiveSuite.Queen.Web
@@ -17,7 +16,7 @@ namespace HiveSuite.Queen.Web
 
         public WebHandler(ISettings settings)
         {
-            Server = new WebServer("http://localhost:8080/", new NullLog(), RoutingStrategy.Regex);
+            Server = new WebServer("http://localhost:8080/", RoutingStrategy.Regex);
             if(!Directory.Exists(Directory.GetCurrentDirectory() + "\\html"))
             {
                 Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\html");

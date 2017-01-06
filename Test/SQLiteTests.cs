@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace HiveSuite.Test
 {
-    [TestFixture]
+    [TestFixture(Category ="SQLite")]
     public class SQLiteTests
     {
         SQLiteStorage DB;

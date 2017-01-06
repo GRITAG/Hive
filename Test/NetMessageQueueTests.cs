@@ -15,6 +15,8 @@ namespace HiveSuite.Test
             Queue = new NetMessageQueue();
         }
 
+        
+
         private void EnqueueThree()
         {
             Queue.Enqueue(new NetworkMessage
